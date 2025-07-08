@@ -13,6 +13,7 @@ import "dotenv/config";
 
 import openAiRouter from "./routers/openaiRouter.js";
 import baseRouter from "./routers/baseRouter.js";
+import usersRouter from "./routers/usersRouter.js";
 
 // catch unexpected exceptions
 process.on("uncaughtException", (err) => {
@@ -33,6 +34,7 @@ app.use(express.json()); // Always the second because need to parse JSON
 app.use(logger) // Always the third because need to logging requests and responses
 
 app.use("/openai", openAiRouter)
+app.use("/users", usersRouter);
 app.use("/", baseRouter) // final router
 
 app.use(errorHandler)

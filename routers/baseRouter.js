@@ -19,4 +19,9 @@ router.post("/", async (req, res) => {
     });
 })
 
+// 404 handler for all undefined paths
+router.use((req, res) => {
+    res.status(404).json({ error: "Route not found" });
+});
+
 export default router;
