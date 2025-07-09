@@ -10,7 +10,6 @@ export function withResume(handler) {
             return res.status(404).json({ error: "Resume not found" });
         }
         req.foundResume = resume; // inside handler there is a resume from now
-        console.log("withResume -> calling handler", handler.name, typeof handler);
         return handler(req, res, next);
     }
 }

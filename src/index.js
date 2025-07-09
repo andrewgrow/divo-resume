@@ -1,19 +1,19 @@
-// src/index.js
+// ./src/index.js
 
 if (process.env.NODE_ENV === 'development') {
     console.log('Happy developing ✨')
 }
 
-import { requestId } from "./src/middleware/requestId.js";
-import { logger } from "./src/middleware/logger.js";
-import { errorHandler } from "./src/middleware/errorHandler.js";
+import { requestId } from "./middleware/requestId.js";
+import { logger } from "./middleware/logger.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 import express from "express";
 import "dotenv/config";
 
-import openAiRouter from "./src/routers/openaiRouter.js";
-import baseRouter from "./src/routers/baseRouter.js";
-import usersRouter from "./src/routers/usersRouter.js";
+import openAiRouter from "./routers/openaiRouter.js";
+import baseRouter from "./routers/baseRouter.js";
+import usersRouter from "./routers/usersRouter.js";
 
 // catch unexpected exceptions
 process.on("uncaughtException", (err) => {
