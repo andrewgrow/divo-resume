@@ -1,7 +1,7 @@
-// src/routers/usersRouter.js
+// ./src/routers/usersRouter.js
 
 import express from "express";
-import resumesRouter from "../routers/resumesRouter.js";
+import resumesRouter from "./resumesRouter.js";
 
 const router = express.Router();
 

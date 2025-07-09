@@ -1,4 +1,4 @@
-// src/middleware/errorHandler.js
+// ./src/middleware/errorHandler.js
 
 export function errorHandler(err, req, res, next) {
     const now = new Date().toISOString();

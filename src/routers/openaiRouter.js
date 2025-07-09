@@ -1,4 +1,4 @@
-// src/routers/openaiRouter.js
+// ./src/routers/openaiRouter.js
 
 import express from "express";
 import { askOpenAI } from "../api/openai.js";

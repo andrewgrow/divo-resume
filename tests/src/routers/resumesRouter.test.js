@@ -1,9 +1,9 @@
-// ./tests/routers/resumeRouter.test.js
+// ./tests/src/routers/resumeRouter.test.js
 
 import request from "supertest";
 import express from "express";
-import usersRouter from "../../routers/usersRouter.js";
-import { db } from "../../data/fakeDb.js";
+import usersRouter from "../../../src/routers/usersRouter.js";
+import { db } from "../../../src/data/fakeDb.js";
 
 const app = express();
 app.use(express.json());
