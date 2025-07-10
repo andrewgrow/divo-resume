@@ -1,7 +1,7 @@
-// ./src/data/fakeDb.js
+// /src/data/fakeDb.js
 
 export const db = {
     resumes: {},
-    vacancies: {},
+    jobs: {},
     users: {}
 };

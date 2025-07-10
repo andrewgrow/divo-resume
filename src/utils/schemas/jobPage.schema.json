@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JobPageCheckResult",
+  "type": "object",
+  "required": [
+    "statusCode",
+    "status",
+    "statusDetails",
+    "requestUrl"
+  ],
+  "properties": {
+    "statusCode": {
+      "type": "integer",
+      "enum": [200, 400, 403, 500, 503],
+      "description": "HTTP-style status code representing the type of page or error. 200 if the page is a job posting; 400 if it's not (e.g. a listing or error); 403 if authentication/captcha required; 503 if network/site issues; 500 if your internal error or you cannot open page directly."
+    },
+    "status": {
+      "type": "string",
+      "description": "Text explanation for statusCode, e.g., 'OK', 'Bad Request', 'Forbidden', etc."
+    },
+    "statusDetails": {
+      "type": "string",
+      "description": "Short explanation of why the status was set"
+    },
+    "requestUrl": {
+      "type": "string",
+      "description": "Which URL you are requesting"
+    },
+    "jobTitle": {
+      "type": "string",
+      "description": "Job title from the page or 'not available'"
+    },
+    "jobDescription": {
+      "type": "string",
+      "description": "Short description of the job or 'not available'"
+    },
+    "keywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Array of keyword strings for the job posting"
+    },
+    "contact": {
+      "type": "string",
+      "description": "Contact person for the vacancy or 'not available'"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company name from the page or 'not available'"
+    },
+    "location": {
+      "type": "string",
+      "description": "Job location or 'not available'"
+    },
+    "employmentType": {
+      "type": "string",
+      "description": "Employment type (e.g. Full Time, Part Time) or 'not available'"
+    },
+    "remotePolicy": {
+      "type": "string",
+      "description": "Remote policy (e.g. Remote, Hybrid, Onsite) or 'not available'"
+    },
+    "seniority": {
+      "type": "string",
+      "description": "Job seniority (e.g. Junior, Senior, Lead) or 'not available'"
+    },
+    "responsibilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Main job responsibilities as array of strings"
+    },
+    "requirements": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Main job requirements as array of strings"
+    },
+    "nice_to_have": {
+      "type": "string",
+      "description": "Optional/nice-to-have requirements or 'not available'"
+    },
+    "languages": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Languages required or preferred for the job"
+    },
+    "postedDate": {
+      "type": "string",
+      "description": "Date the job was posted, or 'not available'"
+    },
+    "apply_url": {
+      "type": "string",
+      "description": "Direct URL for application or 'not available'"
+    },
+    "salary": {
+      "type": "string",
+      "description": "Salary info or 'not available'"
+    }
+  },
+  "additionalProperties": false
+}

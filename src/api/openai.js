@@ -1,4 +1,4 @@
-// ./src/api/openai.js
+// /src/api/openai.js
 
 import { OpenAI } from "openai";
 
