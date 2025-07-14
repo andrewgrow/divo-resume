@@ -1,6 +1,5 @@
 // /src/tools/puppeteer.js
 
-// import puppeteer from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import path from 'path';
@@ -18,28 +17,41 @@ if (!fs.existsSync(cacheDir)) {
     fs.mkdirSync(cacheDir);
 }
 
-export async function makeWebsiteScreenshot(url) {
+export async function makeScreenshotAsPdf(url) {
     console.log(`job.url: ${url}`);
     console.log(`cacheDir: ${cacheDir}`);
 
-    const uniqUUID = await UUIDv4();
+    const uniqUUID = UUIDv4();
 
-    const screenshotPath = path.join(cacheDir, `${uniqUUID}.png`);
+    const screenshotPath = path.join(cacheDir, `${uniqUUID}.pdf`);
 
     // puppeteer usage as normal
-    await puppeteer.launch({ headless: true }).then(async browser => {
-        console.log('Running puppeteer..')
+    const browser = await puppeteer.launch({ headless: true });
+    try {
+        console.log('Running puppeteer screenshot..')
         const page = await browser.newPage()
-        await page.goto('https://webhook.site/1e904a6a-d7c1-4bf8-b8d2-808892ac1758')
-        // await page.goto(url)
+        await page.setViewport({width: 1280, height: 1920}); // Set screen size.
+        await page.goto(url) // open the destination page
         await setTimeout(3100);
-        await page.screenshot({
+        await page.pdf({
             path: screenshotPath,
-            fullPage: true
+            fullPage: true,
+            format: 'A4',
+            printBackground: true,
+            margin: {
+                top: '20mm',
+                bottom: '20mm',
+                left: '15mm',
+                right: '15mm'
+            },
+            scale: 0.75
         });
+        console.log(`All done, check the screenshot ${screenshotPath} ✨`)
+    } catch (e) {
+        console.log(e)
+    } finally {
         await browser.close()
-        console.log(`All done, check the screenshot. ✨`)
-    })
+    }
 
     return screenshotPath;
 }
