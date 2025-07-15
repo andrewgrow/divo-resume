@@ -2,7 +2,7 @@
 
 import express from "express";
 import {deleteOne, getAll, getOne, updateOne, createOne} from "../controllers/resumeController.js";
-import {withResume} from "../utils/wrappers/withResume.js";
+import withResume from "../utils/wrappers/withResume.js";
 
 const router = express.Router({ mergeParams: true });
 

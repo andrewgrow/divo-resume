@@ -1,4 +1,4 @@
-// ./src/controllers/resumeController.js
+// /src/controllers/resumeController.js
 
 import { v4 as UUIDv4 } from 'uuid';
 import {db, getAllResumeByUser} from "../data/fakeDb.js";
