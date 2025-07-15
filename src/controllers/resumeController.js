@@ -1,11 +1,11 @@
 // ./src/controllers/resumeController.js
 
 import { v4 as UUIDv4 } from 'uuid';
-import { db } from "../data/fakeDb.js";
+import {db, getAllResumeByUser} from "../data/fakeDb.js";
 
 export function getAll(req, res) {
     const userId = req.params.userId;
-    const resumes = Object.values(db.resumes).filter(r => r.userId === userId);
+    const resumes = getAllResumeByUser(userId);
     if (resumes.length === 0) {
         return res.status(404).json({ error: "No resumes found" });
     } else {

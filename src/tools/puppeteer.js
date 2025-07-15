@@ -1,4 +1,4 @@
-// /src/tools/puppeteer.js
+// /src/clearing/puppeteer.js
 
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';

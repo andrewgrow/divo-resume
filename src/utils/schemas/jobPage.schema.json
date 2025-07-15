@@ -17,10 +17,6 @@
       "type": "string",
       "description": "Text explanation for statusCode, e.g., 'OK', 'Bad Request', 'Internal Server Error' etc."
     },
-    "statusDetails": {
-      "type": "string",
-      "description": "Short explanation of why the status was set"
-    },
     "jobTitle": {
       "type": "string",
       "description": "Job title from the document or 'not available'"
@@ -33,26 +29,6 @@
       "type": "array",
       "items": { "type": "string" },
       "description": "Array of keyword strings for the job posting from the document"
-    },
-    "company": {
-      "type": "string",
-      "description": "Company name from the document or 'not available'"
-    },
-    "location": {
-      "type": "string",
-      "description": "Job location from the document or 'not available'"
-    },
-    "employmentType": {
-      "type": "string",
-      "description": "Employment type (e.g. Full Time, Part Time) from the document or 'not available'"
-    },
-    "remotePolicy": {
-      "type": "string",
-      "description": "Remote policy (e.g. Remote, Hybrid, Onsite) from the document or 'not available'"
-    },
-    "seniority": {
-      "type": "string",
-      "description": "Job seniority (e.g. Junior, Senior, Lead) from the document or 'not available'"
     },
     "responsibilities": {
       "type": "array",
@@ -67,15 +43,6 @@
     "nice_to_have": {
       "type": "string",
       "description": "Optional/Nice-to-have requirements 'not available'"
-    },
-    "languages": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "Optional/Languages required or preferred for the job"
-    },
-    "salary": {
-      "type": "string",
-      "description": "Optional/Salary info or Compensation info or 'not available'"
     }
   },
   "additionalProperties": false
