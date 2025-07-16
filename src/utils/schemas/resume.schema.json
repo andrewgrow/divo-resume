@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Resume",
+  "type": "object",
+  "required": [ "name", "headline", "location", "summary", "skills", "experience", "education", "languages", "soft_skills", "contacts" ],
+  "properties": {
+    "name": { "type": "string" },
+    "headline": { "type": "string" },
+    "location": { "type": "string" },
+    "summary": { "type": "string" },
+    "skills": {
+      "type": "object",
+      "required": [ "programming_languages", "architecture", "frameworks", "libraries", "cloud", "design_patterns", "development_tools", "CI/CD", "monitoring", "testing" ],
+      "properties": {
+        "programming_languages": { "type": "array", "items": { "type": "string" } },
+        "architecture": { "type": "array", "items": { "type": "string" } },
+        "frameworks": { "type": "array", "items": { "type": "string" } },
+        "libraries": { "type": "array", "items": { "type": "string" } },
+        "cloud": { "type": "array", "items": { "type": "string" } },
+        "design_patterns": { "type": "array", "items": { "type": "string" } },
+        "development_tools": { "type": "array", "items": { "type": "string" } },
+        "CI/CD": { "type": "array", "items": { "type": "string" } },
+        "monitoring": { "type": "array", "items": { "type": "string" } },
+        "testing": { "type": "array", "items": { "type": "string" }}
+      },
+      "additionalProperties": false
+    },
+    "experience": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "title", "company", "date_start", "date_end", "location", "achievements" ],
+        "properties": {
+          "title": { "type": "string" },
+          "company": { "type": "string" },
+          "date_start": { "type": "string" },
+          "date_end": { "type": "string" },
+          "location": { "type": "string" },
+          "achievements": { "type": "array", "items": { "type": "string" }}
+        },
+        "additionalProperties": false
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["institution", "degree", "specialty", "date_start", "date_end"],
+        "properties": {
+          "institution": { "type": "string" },
+          "degree": { "type": "string" },
+          "specialty": { "type": "string" },
+          "date_start": { "type": "string" },
+          "date_end": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["language", "level"],
+        "properties": {
+          "language": { "type": "string" },
+          "level": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "soft_skills": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "contacts": {
+      "type": "object",
+      "required": ["email", "linkedin"],
+      "properties": {
+        "email": { "type": ["string", "null"], "format": "email" },
+        "linkedin": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
