@@ -88,7 +88,7 @@ export async function parseJob(req, res) {
         const response = await responsesAPI(
             { model, input, token, jsonSchema, schemaName }
         )
-        console.log(`Response from OpenAi:\n${JSON.stringify(response)}`)
+        console.log(`[${req.requestId}] Response from OpenAi:\n${JSON.stringify(response)}`)
         job.recognized = clearAiAnswer(response.output_text);
         db.jobs[jobId] = job;
         res.json(job);
@@ -148,8 +148,12 @@ export async function match(req, res) {
         const response = await responsesAPI(
             {model, input, token, jsonSchema, schemaName}
         )
-        console.log(`Response from OpenAi:\n${JSON.stringify(response)}`)
-        res.json(clearAiAnswer(response.output_text));
+        console.log(`[${req.requestId}] Response from OpenAi:\n${JSON.stringify(response)}`)
+        const result = clearAiAnswer(response.output_text)
+
+        result.openai_response_id = response.id // add to the Result Object the OpenAi Request ID
+
+        res.json(result);
     }  catch (e) {
         console.error(`[${req.requestId}] [OpenAI Error]:`, e);
         res.status(500).json({ error: String(e) });

@@ -12,7 +12,7 @@
       "items": {
         "type": "string"
       },
-      "description": "Reasoning for the match or mismatch decision."
+      "description": "Short reasoning for the match or mismatch decision."
     },
     "matchScore": {
       "type": "number",
@@ -45,11 +45,11 @@
       "items": {
         "type": "string"
       },
-      "description": "Recommendations for resume improvement to better fit the vacancy."
+      "description": "Short key recommendations for resume improvement to better fit the vacancy."
     },
     "conclusion": {
       "type": "string",
-      "description": "Overall summary/conclusion of the match analysis."
+      "description": "Short overall summary/conclusion of the match analysis."
     }
   },
   "required": ["match", "reasoning", "matchScore", "keywords", "recommendations", "conclusion"],

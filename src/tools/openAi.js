@@ -40,9 +40,11 @@ import { OpenAI } from "openai";
  * @param {string} params.schemaName - Unique name of the Schema for response
  * @returns {Promise<any>} Model response
  */
-export async function responsesAPI({ model, input, token, jsonSchema, schemaName }) {
+export async function responsesAPI({ model, input, token, jsonSchema, schemaName, previousResponseId }) {
     const openai = new OpenAI({ apiKey: token });
-    return openai.responses.create({
+
+    // base question object
+    const requestPayload = {
         model: model,
         input: input,
         text: {
@@ -52,5 +54,12 @@ export async function responsesAPI({ model, input, token, jsonSchema, schemaName
                 schema: jsonSchema,
             }
         }
-    });
+    };
+
+    // add previousResponseId if exists
+    if (previousResponseId) {
+        requestPayload.previous_response_id = previousResponseId;
+    }
+
+    return openai.responses.create(requestPayload);
 }
