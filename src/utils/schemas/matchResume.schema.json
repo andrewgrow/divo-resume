@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MatchResumeWithJobResponseResult",
+  "type": "object",
+  "properties": {
+    "match": {
+      "type": "boolean",
+      "description": "Does the candidate's resume match the vacancy requirements?"
+    },
+    "reasoning": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Reasoning for the match or mismatch decision."
+    },
+    "matchScore": {
+      "type": "number",
+      "description": "What is the match score for this resume with the job on a scale from 0 to 100, where 0 is a complete mismatch and 100 is the maximum match?"
+    },
+    "keywords": {
+      "type": "object",
+      "properties": {
+        "matched": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of keywords/requirements from the vacancy that were found in the resume."
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of important vacancy keywords/requirements not found in the resume."
+        }
+      },
+      "required": ["matched", "missing"],
+      "additionalProperties": false,
+      "description": "Keywords analysis: matched and missing keywords from the vacancy."
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommendations for resume improvement to better fit the vacancy."
+    },
+    "conclusion": {
+      "type": "string",
+      "description": "Overall summary/conclusion of the match analysis."
+    }
+  },
+  "required": ["match", "reasoning", "matchScore", "keywords", "recommendations", "conclusion"],
+  "additionalProperties": false
+}

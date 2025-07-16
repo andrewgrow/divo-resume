@@ -41,18 +41,6 @@ export function deleteOne(req, res) {
     res.json({ success: true });
 }
 
-// export function createPdf(req, res) {
-//     const resume = req.foundResume;
-//     const resumeFileName = `${UUIDv4()}.pdf`
-//     const resumePath = filePath(`../cache/${resumeFileName}`);
-//
-//     // ... create PDF file here from ${resume}
-//
-//     // ... save file to ${resumePath}
-//
-//     res.json({ success: true, filePath: resumePath });
-// }
-
 export function createPdf(req, res) {
     const resume = req.foundResume;
     const resumeFileName = `${UUIDv4()}.pdf`;

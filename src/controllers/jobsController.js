@@ -7,7 +7,7 @@ import path from "path";
 import fs from "fs";
 import { readFile } from "fs/promises";
 import { filePath } from "../utils/wrappers/filePath.js";
-import {analyzeInputAI, askOpenAI} from "../tools/openAi.js";
+import { responsesAPI } from "../tools/openAi.js";
 import { clearAiAnswer } from "../utils/clearing/clearAiAnswer.js";
 
 export function getAll(req, res) {
@@ -50,13 +50,19 @@ export async function parseJob(req, res) {
 
     // PDF
     const pdfAsBase64 = fs.readFileSync(screenshotPath, "base64");
+
+    // Schema for the Response
     const schemaRaw = await readFile(
-        filePath('../schemas/jobPage.schema.json'),
+        filePath('../schemas/parseJob.schema.json'),
         'utf-8'
     );
+    const jsonSchema = JSON.parse(schemaRaw);
+    const schemaName = jsonSchema.title;
+
+    // Task
     const taskText = `Check the screenshot of a website represented by PDF document. 
-    Recognize text in the document. 
-    Create a response in English as a JSON by scheme: ${schemaRaw}`
+    Recognize text in the document. Create a response in English.`
+
     const input = [
         {
             role: "user",
@@ -74,11 +80,15 @@ export async function parseJob(req, res) {
         },
     ]
 
-    // PROCESSING
+    // AI credentials
     const token = req.foundAiToken;
     const model = "gpt-4.1";
+
     try {
-        const response = await analyzeInputAI({model, input, token})
+        const response = await responsesAPI(
+            { model, input, token, jsonSchema, schemaName }
+        )
+        console.log(`Response from OpenAi:\n${JSON.stringify(response)}`)
         job.recognized = clearAiAnswer(response.output_text);
         db.jobs[jobId] = job;
         res.json(job);
@@ -88,7 +98,8 @@ export async function parseJob(req, res) {
     }
 }
 
-export async function adaptResume(req, res) {
+/** Check if the Resume matches with the Job */
+export async function match(req, res) {
     const job = req.foundJob;
     const recognizedJob = job?.recognized;
     if (!recognizedJob || !recognizedJob.keywords) {
@@ -105,23 +116,42 @@ export async function adaptResume(req, res) {
                 
                 Describe why this resume matches for this job, which keywords and experience can be used for this job and other details.
                 Otherwise describe why this resume cannot be used for this job and should be changed.
-                
-                Return Your answer strickly as an JSON object.
-
-                Resume:
-                ${JSON.stringify(resume, null, 2)}
-
-                Vacancy:
-                ${JSON.stringify(recognizedJob, null, 2)}`
-
-    const messages = [
-        { role: "user", content: taskText }
+                `
+    const input = [
+        {
+            role: "user",
+            content: taskText
+        },
+        {
+            role: "user",
+            content: `Resume:\n${JSON.stringify(resume, null, 2)}`
+        },
+        {
+            role: "user",
+            content: `Vacancy:\n${JSON.stringify(recognizedJob, null, 2)}`
+        },
     ]
 
+    // Schema for the Response
+    const rawSchema = await readFile(
+        filePath('../schemas/matchResume.schema.json'),
+        'utf-8'
+    );
+    const jsonSchema = JSON.parse(rawSchema);
+    const schemaName = jsonSchema.title;
+
+    // AI credentials
     const token = req.foundAiToken;
     const model = "gpt-4.1";
-    const response = await askOpenAI({ model, token, messages })
-    let result = response.choices[0].message.content.trim();
 
-    res.json(clearAiAnswer(result));
+    try {
+        const response = await responsesAPI(
+            {model, input, token, jsonSchema, schemaName}
+        )
+        console.log(`Response from OpenAi:\n${JSON.stringify(response)}`)
+        res.json(clearAiAnswer(response.output_text));
+    }  catch (e) {
+        console.error(`[${req.requestId}] [OpenAI Error]:`, e);
+        res.status(500).json({ error: String(e) });
+    }
 }

@@ -1,7 +1,7 @@
 // /src/routers/jobsRouter.js
 
 import express from "express";
-import { getAll, createOne, takeScreenshot, parseJob, adaptResume } from "../controllers/jobsController.js"
+import { getAll, createOne, takeScreenshot, parseJob, match } from "../controllers/jobsController.js"
 import withResume from "../utils/wrappers/withResume.js";
 import withJob from "../utils/wrappers/withJob.js";
 import withAiToken from "../utils/wrappers/withAiToken.js";
@@ -14,8 +14,8 @@ router.post("/:jobId/takeScreenshot", withJob(takeScreenshot))
 // POST /users/:userId/jobs/:jobId/parseJob
 router.post("/:jobId/parseJob", withAiToken(withJob(parseJob)))
 
-// POST /users/:userId/jobs/:jobId/adaptResume
-router.post("/:jobId/adaptResume", withAiToken(withJob(withResume(adaptResume))))
+// POST /users/:userId/jobs/:jobId/match
+router.post("/:jobId/match", withAiToken(withJob(withResume(match))))
 
 // GET /users/:userId/jobs
 router.get("/", getAll);

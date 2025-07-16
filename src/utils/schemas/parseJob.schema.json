@@ -1,12 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "VacancyRecognizeResult",
+  "title": "VacancyRecognizingResult",
   "type": "object",
-  "required": [
-    "statusCode",
-    "status",
-    "statusDetails"
-  ],
   "properties": {
     "statusCode": {
       "type": "integer",
@@ -17,33 +12,38 @@
       "type": "string",
       "description": "Text explanation for statusCode, e.g., 'OK', 'Bad Request', 'Internal Server Error' etc."
     },
-    "jobTitle": {
+    "statusDetails": {
       "type": "string",
-      "description": "Job title from the document or 'not available'"
+      "description": "Short describing about why the status has been set"
+    },
+    "jobTitle": {
+      "type": ["string", "null"],
+      "description": "Job title from the document"
     },
     "jobDescription": {
-      "type": "string",
-      "description": "Short description of the job from the document or 'not available'"
+      "type": ["string", "null"],
+      "description": "Short description of the job from the document"
     },
     "keywords": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": { "type": ["string", "null"] },
       "description": "Array of keyword strings for the job posting from the document"
     },
     "responsibilities": {
       "type": "array",
-      "items": { "type": "string" },
-      "description": "Optional/Main job responsibilities as array of strings"
+      "items": { "type": ["string", "null"] },
+      "description": "Main job responsibilities as array of strings"
     },
     "requirements": {
       "type": "array",
-      "items": { "type": "string" },
-      "description": "Optional/Main job requirements as array of strings"
+      "items": { "type": ["string", "null"] },
+      "description": "Main job requirements as array of strings"
     },
     "nice_to_have": {
-      "type": "string",
-      "description": "Optional/Nice-to-have requirements 'not available'"
+      "type": ["string", "null"],
+      "description": "Nice-to-have requirements for the job"
     }
   },
+  "required": ["statusCode", "status", "statusDetails", "jobTitle", "jobDescription", "keywords", "responsibilities", "requirements", "nice_to_have"],
   "additionalProperties": false
 }

@@ -11,7 +11,6 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import express from "express";
 import "dotenv/config";
 
-import openAiRouter from "./routers/openaiRouter.js";
 import baseRouter from "./routers/baseRouter.js";
 import usersRouter from "./routers/usersRouter.js";
 
@@ -33,7 +32,6 @@ app.use(requestId) // Always first because need to set UUID
 app.use(express.json()); // Always the second because need to parse JSON
 app.use(logger) // Always the third because need to logging requests and responses
 
-app.use("/openai", openAiRouter)
 app.use("/users", usersRouter);
 app.use("/", baseRouter) // final router
 

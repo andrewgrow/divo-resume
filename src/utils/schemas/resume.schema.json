@@ -1,8 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Resume",
+  "title": "UserResume",
   "type": "object",
-  "required": [ "name", "headline", "location", "summary", "skills", "experience", "education", "languages", "soft_skills", "contacts" ],
   "properties": {
     "name": { "type": "string" },
     "headline": { "type": "string" },
@@ -10,7 +9,6 @@
     "summary": { "type": "string" },
     "skills": {
       "type": "object",
-      "required": [ "programming_languages", "architecture", "frameworks", "libraries", "cloud", "design_patterns", "development_tools", "CI/CD", "monitoring", "testing" ],
       "properties": {
         "programming_languages": { "type": "array", "items": { "type": "string" } },
         "architecture": { "type": "array", "items": { "type": "string" } },
@@ -23,13 +21,13 @@
         "monitoring": { "type": "array", "items": { "type": "string" } },
         "testing": { "type": "array", "items": { "type": "string" }}
       },
+      "required": [ "programming_languages", "architecture", "frameworks", "libraries", "cloud", "design_patterns", "development_tools", "CI/CD", "monitoring", "testing" ],
       "additionalProperties": false
     },
     "experience": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": [ "title", "company", "date_start", "date_end", "location", "achievements" ],
         "properties": {
           "title": { "type": "string" },
           "company": { "type": "string" },
@@ -38,6 +36,7 @@
           "location": { "type": "string" },
           "achievements": { "type": "array", "items": { "type": "string" }}
         },
+        "required": [ "title", "company", "date_start", "date_end", "location", "achievements" ],
         "additionalProperties": false
       }
     },
@@ -45,7 +44,6 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["institution", "degree", "specialty", "date_start", "date_end"],
         "properties": {
           "institution": { "type": "string" },
           "degree": { "type": "string" },
@@ -53,6 +51,7 @@
           "date_start": { "type": "string" },
           "date_end": { "type": "string" }
         },
+        "required": ["institution", "degree", "specialty", "date_start", "date_end"],
         "additionalProperties": false
       }
     },
@@ -60,11 +59,11 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["language", "level"],
         "properties": {
           "language": { "type": "string" },
           "level": { "type": "string" }
         },
+        "required": ["language", "level"],
         "additionalProperties": false
       }
     },
@@ -74,13 +73,14 @@
     },
     "contacts": {
       "type": "object",
-      "required": ["email", "linkedin"],
       "properties": {
         "email": { "type": ["string", "null"], "format": "email" },
         "linkedin": { "type": "string", "format": "uri" }
       },
+      "required": ["email", "linkedin"],
       "additionalProperties": false
     }
   },
+  "required": [ "name", "headline", "location", "summary", "skills", "experience", "education", "languages", "soft_skills", "contacts" ],
   "additionalProperties": false
 }
