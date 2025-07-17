@@ -1,15 +1,15 @@
 // /src/utils/wrappers/withJob.js
 
-import { db } from "../../data/fakeDb.js";
+import { findJobById } from '../../database/services/jobsService.js'
 
 export default function withJob(handler) {
-    return function (req, res, next) {
+    return async function (req, res, next) {
         const jobId = req.params.jobId;
         if (!jobId) {
-            return res.status(400).json({ message: "JobId token is absent" });
+            return res.status(400).json({ message: "JobId is absent" });
         }
 
-        const job = db.jobs[jobId];
+        const job = await findJobById(jobId);
         if (!job) {
             return res.status(404).json({ message: `Job with id ${jobId} not found` });
         }

@@ -3,13 +3,32 @@
 import express from "express";
 import resumesRouter from "./resumesRouter.js";
 import jobsRouter from "./jobsRouter.js";
+import {createOne as createUser, loginUser} from "../controllers/usersController.js";
+import rateLimit from "express-rate-limit";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 // resumes router includes into users path, so it looks like /users/:userId/resumes
-router.use("/:userId/resumes", resumesRouter);
+router.use("/:userId/resumes", authMiddleware, resumesRouter);
 
 // jobs router includes into users path, so it looks like /users/:userId/jobs
-router.use("/:userId/jobs", jobsRouter);
+router.use("/:userId/jobs", authMiddleware, jobsRouter);
+
+const loginLimiter = rateLimit({
+    windowMs: 1000 * 5, // 3 seconds
+    max: 1, // 1 requests per IP
+    message: { error: 'Too many login attempts. Please try again later.' }
+});
+// POST /users/login
+router.post("/login", loginLimiter, loginUser);
+
+const registerLimiter = rateLimit({
+    windowMs: 1000 * 5, // 5 seconds
+    max: 1, // 1 requests per IP
+    message: { error: 'Too many registration attempts. Please try again later.' }
+});
+// POST /users
+router.post("/", registerLimiter, createUser);
 
 export default router;

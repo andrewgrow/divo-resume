@@ -3,7 +3,8 @@
 import request from "supertest";
 import express from "express";
 import usersRouter from "../../../src/routers/usersRouter.js";
-import { db } from "../../../src/data/fakeDb.js";
+
+let resumes = {}
 
 const app = express();
 app.use(express.json());
@@ -15,7 +16,7 @@ describe("Resumes API", () => {
 
     beforeEach(() => {
         // Clear in-memory database before each test
-        db.resumes = {};
+        resumes = {};
     });
 
     it("POST /users/:userId/resumes create new resume", async () => {

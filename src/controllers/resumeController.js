@@ -1,44 +1,35 @@
 // /src/controllers/resumeController.js
 
 import { v4 as UUIDv4 } from 'uuid';
-import {db, getAllResumeByUser} from "../data/fakeDb.js";
 import {filePath} from "../utils/wrappers/filePath.js";
 import PDFDocument from "pdfkit";
 import fs from "fs";
+import {getAllResume, createOne as createResume} from "../database/services/resumeService.js";
 
-export function getAll(req, res) {
+export async function getAll(req, res) {
     const userId = req.params.userId;
-    const resumes = getAllResumeByUser(userId);
-    if (resumes.length === 0) {
+    const resumes = await getAllResume(userId);
+    if (!resumes.length || resumes.length === 0) {
         return res.status(404).json({ error: "No resumes found" });
     } else {
         res.json(resumes);
     }
 }
 
-export function getOne(req, res) {
-    res.json(req.foundResume);
+export async function getOne(req, res) {
+    res.json(req.foundResume); // withResume(...)
 }
 
-export function createOne(req, res) {
+export async function createOne(req, res) {
     const userId = req.params.userId;
     const resumeData = req.body;
-    const resumeId = UUIDv4();
-    const resume = { resumeId, userId, ...resumeData };
-    db.resumes[resumeId] = resume;
-    res.status(201).json(resume);
-}
-
-export function updateOne(req, res) {
-    const { resumeId: ignore1, userId: ignore2, ...allowedFields } = req.body;
-    Object.assign(req.foundResume, allowedFields);
-    db.resumes[req.foundResume.resumeId] = req.foundResume;
-    res.json(req.foundResume);
-}
-
-export function deleteOne(req, res) {
-    delete db.resumes[req.foundResume.resumeId];
-    res.json({ success: true });
+    const resume = { userId, ...resumeData };
+    try {
+        const createdResume = await createResume(resume);
+        res.status(201).json(createdResume);
+    } catch (err) {
+        return res.status(400).json({ error: err });
+    }
 }
 
 export function createPdf(req, res) {

@@ -1,7 +1,11 @@
 services:
-  backend:
-    build: .
+  mongodb:
+    image: mongo:7
+    restart: always
     ports:
-      - "3000:3000"
-    env_file:
-      - .env
+      - "27017:27017"
+    volumes:
+      - mongo-database:/database/db
+
+volumes:
+  mongo-database:

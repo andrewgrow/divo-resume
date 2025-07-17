@@ -1,8 +1,8 @@
 // ./src/routers/resumesRouter.js
 
 import express from "express";
-import {deleteOne, getAll, getOne, updateOne, createOne, createPdf} from "../controllers/resumeController.js";
-import withResume from "../utils/wrappers/withResume.js";
+import {getAll, getOne, createOne, createPdf} from "../controllers/resumeController.js";
+import withMainResume from "../utils/wrappers/withMainResume.js";
 
 const router = express.Router({ mergeParams: true });
 
@@ -10,18 +10,12 @@ const router = express.Router({ mergeParams: true });
 router.get("/", getAll)
 
 // GET /users/:userId/resumes/:resumeId
-router.get("/:resumeId", withResume(getOne));
+router.get("/:resumeId", withMainResume(getOne));
 
 // POST /users/:userId/resumes/:resumeId/createPdf
-router.post("/:resumeId/createPdf", withResume(createPdf))
+router.post("/:resumeId/createPdf", withMainResume(createPdf))
 
 // POST /users/:userId/resumes
 router.post("/", createOne);
-
-// PUT /users/:userId/resumes/:resumeId
-router.put("/:resumeId", withResume(updateOne))
-
-// DELETE /users/:userId/resumes/:resumeId
-router.delete("/:resumeId", withResume(deleteOne));
 
 export default router;

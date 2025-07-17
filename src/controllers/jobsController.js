@@ -1,7 +1,6 @@
 // /src/controllers/jobsController.js
 
 import { v4 as UUIDv4 } from "uuid";
-import { db, getAllResumeByUser } from "../data/fakeDb.js";
 import { makeScreenshotAsPdf } from "../tools/puppeteer.js";
 import path from "path";
 import fs from "fs";
@@ -9,12 +8,13 @@ import { readFile } from "fs/promises";
 import { filePath } from "../utils/wrappers/filePath.js";
 import { responsesAPI } from "../tools/openAi.js";
 import { clearAiAnswer } from "../utils/clearing/clearAiAnswer.js";
+import {allJobsByUser, createJob, updateJob} from "../database/services/jobsService.js";
 
-export function getAll(req, res) {
-    const jobs = getAllResumeByUser(req.params.userId);
+export async function getAllJobs(req, res) {
+    const jobs = await allJobsByUser(req.params.userId);
 
-    if (jobs.length === 0) {
-        return res.status(400).json({ error: "No jobs found" });
+    if (!jobs || !jobs.length || jobs.length === 0) {
+        return res.status(404).json({ error: "No jobs found" });
     } else {
         res.json(jobs);
     }
@@ -23,24 +23,21 @@ export function getAll(req, res) {
 export async function createOne(req, res) {
     const userId = req.params.userId;
     const jobData = req.body;
-    const jobId = UUIDv4();
-    const job = { jobId, userId, ...jobData };
-
-    db.jobs[jobId] = job;
-    res.status(201).json(job);
+    const job = { userId, ...jobData };
+    const createdJob = await createJob(job)
+    res.status(201).json(createdJob);
 }
 
 export async function takeScreenshot(req, res) {
     const job = req.foundJob;
-    const jobId = job.jobId;
     job.screenshot = await makeScreenshotAsPdf(job.url) // e.g. "/Users/hrow/WebstormProjects/Divo-Resume/cache/dropbox-7d82b0c9-1110-4915-a9a8-be14e044fc09.pdf";
-    db.jobs[jobId] = job;
-    res.json(job);
+    const updatedJob = await updateJob(job)
+    res.json(updatedJob);
 }
 
 export async function parseJob(req, res) {
     const job = req.foundJob;
-    const jobId = job.jobId;
+    const jobId = job._id;
     const screenshotPath = job.screenshot // e.g. "/Users/hrow/WebstormProjects/Divo-Resume/cache/dropbox-7d82b0c9-1110-4915-a9a8-be14e044fc09.pdf";
     if (!screenshotPath) {
         return res.status(400).json({ message: `Screenshot for the Job ${jobId} does not exist` });
@@ -90,8 +87,8 @@ export async function parseJob(req, res) {
         )
         console.log(`[${req.requestId}] Response from OpenAi:\n${JSON.stringify(response)}`)
         job.recognized = clearAiAnswer(response.output_text);
-        db.jobs[jobId] = job;
-        res.json(job);
+        const updatedJob = await updateJob(job)
+        res.json(updatedJob);
     } catch (e) {
         console.error(`[${req.requestId}] [OpenAI Error]:`, e);
         res.status(500).json({ error: String(e) });

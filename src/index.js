@@ -1,7 +1,9 @@
-// ./src/index.js
+// /src/index.js
+
+import {connectMongoose} from "./database/connection/db.js";
 
 if (process.env.NODE_ENV === 'development') {
-    console.log('Happy developing ✨')
+    console.log('Happy developing mode is enabled ✨')
 }
 
 import { requestId } from "./middleware/requestId.js";
@@ -37,6 +39,16 @@ app.use("/", baseRouter) // final router
 
 app.use(errorHandler)
 
-app.listen(port, () => {
-    console.log(`Server started at http://localhost:${port}`);
-});
+async function startServer() {
+    try {
+        await connectMongoose();
+        app.listen(port, () => {
+            console.log(`Server started at http://localhost:${port}`);
+        });
+    } catch (err) {
+        console.error('Failed to connect to MongoDB:', err);
+        process.exit(1);
+    }
+}
+
+startServer().then(r => {});
