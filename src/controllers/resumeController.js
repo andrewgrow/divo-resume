@@ -4,7 +4,7 @@ import { v4 as UUIDv4 } from 'uuid';
 import {filePath} from "../utils/wrappers/filePath.js";
 import PDFDocument from "pdfkit";
 import fs from "fs";
-import {getAllResume, createOne as createResume} from "../database/services/resumeService.js";
+import {getAllResume, createOne as createResume, getOne as getOneResume, deleteOne as deleteResume} from "../database/services/resumeService.js";
 
 export async function getAll(req, res) {
     const userId = req.params.userId;
@@ -17,7 +17,17 @@ export async function getAll(req, res) {
 }
 
 export async function getOne(req, res) {
-    res.json(req.foundResume); // withResume(...)
+    const userId = req.params.userId;
+    const resumeId = req.params.resumeId;
+    try {
+        const foundResume = await getOneResume(userId, resumeId);
+        if (!foundResume) {
+            return res.status(404).json({ error: "Resume not found" });
+        }
+        res.json(foundResume);
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
 }
 
 export async function createOne(req, res) {
@@ -28,6 +38,7 @@ export async function createOne(req, res) {
         const createdResume = await createResume(resume);
         res.status(201).json(createdResume);
     } catch (err) {
+        console.log(`Error during create resume: ${err.message}`);
         return res.status(400).json({ error: err });
     }
 }
@@ -117,4 +128,14 @@ export function createPdf(req, res) {
     stream.on('error', (err) => {
         res.status(500).json({ success: false, error: err.message });
     });
+}
+
+export async function deleteOne(req, res) {
+    const userId = req.params.userId;
+    const resumeId = req.params.resumeId;
+    const result = await deleteResume(userId, resumeId)
+    if (!result) {
+        return res.status(404).json({ success: false, message: 'Resume ID not found' });
+    }
+    res.json({ result: "success" });
 }

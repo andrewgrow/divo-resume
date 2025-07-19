@@ -8,14 +8,14 @@ export async function getAllResume(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
         return [];
     }
-    return Resume.find({ userId: new mongoose.Types.ObjectId(userId) }).limit(1000);
+    return Resume.find({ userId: userId }).limit(1000);
 }
 
 export async function getMainResume(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
         return null;
     }
-    return Resume.findOne({ userId: new mongoose.Types.ObjectId(userId), isMainResume: true });
+    return Resume.findOne({ userId: userId, isMainResume: true });
 }
 
 export async function createOne(resume) {
@@ -28,4 +28,18 @@ export async function createOne(resume) {
         throw new Error('User not found');
     }
     return Resume.create(resume);
+}
+
+export async function getOne(userId, resumeId) {
+    if (!mongoose.Types.ObjectId.isValid(resumeId)) {
+        throw new Error('Invalid resumeId format');
+    }
+    return Resume.findOne({ _id: resumeId, userId: userId });
+}
+
+export async function deleteOne(userId, resumeId) {
+    if (!mongoose.Types.ObjectId.isValid(resumeId)) {
+        return null;
+    }
+    return Resume.deleteOne({ _id: resumeId, userId: userId });
 }
