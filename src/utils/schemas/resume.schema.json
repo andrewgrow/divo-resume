@@ -34,9 +34,21 @@
           "date_start": { "type": "string" },
           "date_end": { "type": "string" },
           "location": { "type": "string" },
-          "achievements": { "type": "array", "items": { "type": "string" }}
-        },
-        "required": [ "title", "company", "date_start", "date_end", "location", "achievements" ],
+          "achievements": { "type": "array", "items": { "type": "string" }},
+          "projects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "technologies": { "type": "array", "items": { "type": "string" } }
+              },
+              "required": ["title", "description", "technologies"],
+              "additionalProperties": false
+            }
+        }},
+        "required": [ "title", "company", "date_start", "date_end", "location", "achievements", "projects" ],
         "additionalProperties": false
       }
     },

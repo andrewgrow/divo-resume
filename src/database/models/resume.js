@@ -15,6 +15,12 @@ const SkillsSchema = new mongoose.Schema({
     testing: {type: [String], required: true},
 }, { _id: false })
 
+const ProjectSchema = new mongoose.Schema({
+    title: {type: String, required: true},
+    description: {type: String, required: true},
+    technologies: {type: [String], required: true},
+}, {_id: false})
+
 const ExperienceSchema = new mongoose.Schema({
     title: {type: String, required: true},
     company: {type: String, required: true},
@@ -22,6 +28,7 @@ const ExperienceSchema = new mongoose.Schema({
     date_end: {type: String, required: true},
     location: {type: String, required: true},
     achievements:  {type: [String], required: true},
+    projects: { type: [ProjectSchema], required: false, default: [] }
 }, { _id: false })
 
 const EducationSchema = new mongoose.Schema({
