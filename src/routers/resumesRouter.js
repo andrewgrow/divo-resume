@@ -1,24 +1,31 @@
 // ./src/routers/resumesRouter.js
 
 import express from "express";
-import {getAll, getOne, createOne, createPdf, deleteOne} from "../controllers/resumeController.js";
+import {getAll, getOne, createOne, createPdf, deleteOne, updateOne} from "../controllers/resumeController.js";
 import withMainResume from "../utils/wrappers/withMainResume.js";
+import withValidResumeId from "../utils/wrappers/withValidResumeId.js";
 
 const router = express.Router({ mergeParams: true });
+
+// GET /users/:userId/resumes/main (get primary resume)
+router.get("/main", withMainResume(getOne));
+
+// GET /users/:userId/resumes/:resumeId (get resume)
+router.get("/:resumeId", withValidResumeId(getOne));
+
+// POST /users/:userId/resumes/:resumeId/createPdf (create PDF)
+router.post("/:resumeId/createPdf", withValidResumeId(withMainResume(createPdf)))
+
+// POST /users/:userId/resumes (create new resume)
+router.post("/", createOne);
+
+// DELETE /users/:userId/resumes/:resumeId (delete resume)
+router.delete("/:resumeId", withValidResumeId(deleteOne))
 
 // GET /users/:userId/resumes
 router.get("/", getAll)
 
-// GET /users/:userId/resumes/:resumeId
-router.get("/:resumeId", getOne);
-
-// POST /users/:userId/resumes/:resumeId/createPdf
-router.post("/:resumeId/createPdf", withMainResume(createPdf))
-
-// POST /users/:userId/resumes
-router.post("/", createOne);
-
-// DELETE /users/:userId/resumes/:resumeId
-router.delete("/:resumeId", deleteOne)
+// PUT /users/:userId/resumes/:resumeId
+router.put("/:resumeId", withValidResumeId(updateOne))
 
 export default router;

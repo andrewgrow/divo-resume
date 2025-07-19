@@ -4,7 +4,14 @@ import { v4 as UUIDv4 } from 'uuid';
 import {filePath} from "../utils/wrappers/filePath.js";
 import PDFDocument from "pdfkit";
 import fs from "fs";
-import {getAllResume, createOne as createResume, getOne as getOneResume, deleteOne as deleteResume} from "../database/services/resumeService.js";
+import {
+    getAllResume,
+    createOne as createResume,
+    getOne as getOneResume,
+    deleteOne as deleteResume,
+    setAllResumeAsNonMain
+} from "../database/services/resumeService.js";
+import {updateOne as updateResume} from "../database/services/resumeService.js";
 
 export async function getAll(req, res) {
     const userId = req.params.userId;
@@ -17,6 +24,14 @@ export async function getAll(req, res) {
 }
 
 export async function getOne(req, res) {
+    // e.g. main resume was added during wrapper `withMainResume`
+    const foundResumeUserId = req.foundResume?.userId?.toString()
+    console.log({ foundResumeUserId: foundResumeUserId });
+    console.log("req.params.userId:", req.params.userId);
+    if (req.foundResume && foundResumeUserId === req.params.userId) {
+        return res.json(req.foundResume);
+    }
+
     const userId = req.params.userId;
     const resumeId = req.params.resumeId;
     try {
@@ -34,6 +49,13 @@ export async function createOne(req, res) {
     const userId = req.params.userId;
     const resumeData = req.body;
     const resume = { userId, ...resumeData };
+
+    // we cannot create another main resume, so we need to check it
+    if (resume.isMainResume) {
+        // Сбросить isMainResume у всех других резюме этого пользователя
+        await setAllResumeAsNonMain(userId)
+    }
+
     try {
         const createdResume = await createResume(resume);
         res.status(201).json(createdResume);
@@ -138,4 +160,21 @@ export async function deleteOne(req, res) {
         return res.status(404).json({ success: false, message: 'Resume ID not found' });
     }
     res.json({ result: "success" });
+}
+
+export async function updateOne(req, res) {
+    const userId = req.params.userId;
+    const resumeId = req.params.resumeId;
+
+    const resumeData = { _id: resumeId, userId: userId, ...req.body };
+
+    const dbResume = await getOneResume(userId, resumeId)
+    if (!dbResume) {
+        return res.status(404).json({ success: false, message: 'Resume not found' });
+    }
+    if (resumeData.isMainResume) {
+        await setAllResumeAsNonMain(userId)
+    }
+    const updatedResume = await updateResume(resumeData)
+    res.status(200).json(updatedResume);
 }

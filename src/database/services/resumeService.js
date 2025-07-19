@@ -15,7 +15,14 @@ export async function getMainResume(userId) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
         return null;
     }
-    return Resume.findOne({ userId: userId, isMainResume: true });
+    const allResume = await Resume.find({ userId: userId, isMainResume: true }).limit(1000);
+    if (!allResume || allResume.length > 1) {
+        throw new Error('User has too many resumes');
+    } else if (allResume.length === 1) {
+        return allResume[0];
+    } else {
+        return [];
+    }
 }
 
 export async function createOne(resume) {
@@ -42,4 +49,15 @@ export async function deleteOne(userId, resumeId) {
         return null;
     }
     return Resume.deleteOne({ _id: resumeId, userId: userId });
+}
+
+export async function updateOne(resume) {
+    return Resume.findByIdAndUpdate(resume._id, resume, { new: true, runValidators: true });
+}
+
+export async function setAllResumeAsNonMain(userId) {
+    return Resume.updateMany(
+        { userId, isMainResume: true },
+        { $set: { isMainResume: false } }
+    );
 }
