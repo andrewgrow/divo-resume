@@ -14,7 +14,7 @@ puppeteer.use(StealthPlugin());
 // prepare cacheDir
 const cacheDir = filePath("../../../cache")
 if (!fs.existsSync(cacheDir)) {
-    fs.mkdirSync(cacheDir);
+    fs.mkdirSync(cacheDir, { recursive: true });
 }
 
 export async function makeScreenshotAsPdf(url) {

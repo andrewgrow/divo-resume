@@ -106,3 +106,7 @@ export async function updateOne(req, res) {
     const updatedResume = await updateResume(resumeData)
     res.status(200).json(updatedResume);
 }
+
+export async function uploadPdf(req, res) {
+    res.status(200).json({ isMainResume: req.body.isMainResume, filePath: req.file.path });
+}

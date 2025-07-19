@@ -7,7 +7,7 @@ import {filePath} from "../utils/wrappers/filePath.js";
 
 export function generateResumePdf(resume, cacheDir = "../../../cache") {
     const resumeFileName = `${UUIDv4()}.pdf`;
-    const resumePath = filePath(`../../../cache/${resumeFileName}`);
+    const resumePath = filePath(`${cacheDir}/${resumeFileName}`);
     const doc = new PDFDocument({ margin: 40 });
     const stream = fs.createWriteStream(resumePath);
     doc.pipe(stream);

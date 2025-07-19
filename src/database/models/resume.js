@@ -53,6 +53,7 @@ const ResumeSchema = new mongoose.Schema({
     userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
     jobIds: {type: [mongoose.Schema.Types.ObjectId], ref: 'Job'},
     isMainResume: {type: Boolean, required: true, default: false},
+    originalPdf: {type: String},
     name: {type: String, required: true},
     headline: {type: String, required: true},
     location: {type: String, required: true},
