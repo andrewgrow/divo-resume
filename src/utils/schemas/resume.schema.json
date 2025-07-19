@@ -87,7 +87,7 @@
       "type": "object",
       "properties": {
         "email": { "type": ["string", "null"], "format": "email" },
-        "linkedin": { "type": "string", "format": "uri" }
+        "linkedin": { "type": ["string", "null"], "format": "uri" }
       },
       "required": ["email", "linkedin"],
       "additionalProperties": false

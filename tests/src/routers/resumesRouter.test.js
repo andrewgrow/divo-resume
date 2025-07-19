@@ -372,7 +372,7 @@ describe("Resumes API", () => {
         expect(oldMain.isMainResume).toBe(false);
     });
 
-    it("POST /users/:userId/resumes/uploadPdf — успешно загружает PDF файл", async () => {
+    it("POST /users/:userId/resumes/uploadPdf — successful upload PDF файл", async () => {
         // 1. generate pdf
         const { stream, resumePath } = generateResumePdf(
             validResume,

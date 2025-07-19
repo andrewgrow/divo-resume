@@ -1,9 +1,12 @@
+// /tests/src/materials/validResume/js
+
 export const validResume = {
+    isMainResume: false,
     name: "John Test User",
     headline: "Software Quality Assurance Engineer",
     location: "London",
     summary: "Experienced software QA",
-    skills: [{
+    skills: {
         programming_languages: ["JS"],
         architecture: ["MVC"],
         frameworks: ["Express"],
@@ -14,7 +17,7 @@ export const validResume = {
         ci_cd: ["GitHub Actions"],
         monitoring: ["Sentry"],
         testing: ["Mocha"]
-    }],
+    },
     experience: [{
         title: "QA Engineer",
         company: "TestCorp",
@@ -35,8 +38,8 @@ export const validResume = {
         level: "Native"
     }],
     soft_skills: ["Teamwork"],
-    contacts: [{
+    contacts: {
         email: "john@example.com",
         linkedin: "john-profile"
-    }]
+    }
 };
