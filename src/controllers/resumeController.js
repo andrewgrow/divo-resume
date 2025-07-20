@@ -66,18 +66,27 @@ export async function createOne(req, res) {
     }
 }
 
-export function createPdf(req, res) {
-    const resume = req.foundResume;
-
-    const { stream, resumePath } = generateResumePdf(resume);
-
-    stream.on('finish', () => {
-        res.json({ success: true, filePath: resumePath });
-    });
-
-    stream.on('error', (err) => {
-        res.status(500).json({ success: false, error: err.message });
-    });
+export async function createPdf(req, res) {
+    try {
+        // const resume = Object.assign({}, req.foundResume);
+        const resume = req.foundResume;
+        const { stream, resumePath } = generateResumePdf(resume);
+        await new Promise((resolve, reject) => {
+            stream.on("finish", resolve);
+            stream.on("error", reject);
+        });
+        try {
+            resume.pdfFilePath = resumePath;
+            const updatedResume = await updateResume(resume);
+            res.status(201).json(updatedResume);
+        } catch (err) {
+            console.error("Error creating PDF (during update DB record):", err);
+            res.status(500).json({ success: false, error: `"Error creating PDF: ${err.message}` });
+        }
+    } catch (err) {
+        console.error("Error creating PDF:", err);
+        res.status(500).json({ success: false, error: `"Error creating PDF: ${err.message}` });
+    }
 }
 
 export async function deleteOne(req, res) {
