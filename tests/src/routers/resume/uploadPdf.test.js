@@ -59,28 +59,33 @@ describe("Upload Pdf to Resume", () => {
             .attach("upload_file", resumePath)
             .expect(401);
 
-        // 3. Upload file via Endpoint
-        const response = await request(app)
+        // 3. Upload file via Endpoint and create new resume
+        const createdResumeResponse = await request(app)
             .post(`/users/${userId}/resumes/uploadPdf`)
             .set("Authorization", `Bearer ${token}`)
             .attach("upload_file", resumePath)
-            .expect(200);
+            .expect(201);
+        const createdResume = createdResumeResponse.body;
 
         await new Promise(r => setTimeout(r, 50));
 
-        expect(response.body).toHaveProperty("filePath");
-        expect(response.body.filePath.endsWith(".pdf")).toBe(true);
-        expect(fs.existsSync(response.body.filePath)).toBe(true);
+        expect(createdResume).toBeDefined();
+        expect(createdResume).toHaveProperty("_id");
+        expect(createdResume).toHaveProperty("pdfFilePath");
+        expect(createdResume.pdfFilePath.endsWith(".pdf")).toBe(true);
+        expect(fs.existsSync(createdResume.pdfFilePath)).toBe(true);
 
         // Clearing: remove both files
         await new Promise(r => setTimeout(r, 50));
 
-        await fs.unlinkSync(response.body.filePath);
+        await fs.unlinkSync(createdResume.pdfFilePath);
         await fs.unlinkSync(resumePath);
 
         // Check removing
-        expect(fs.existsSync(response.body.filePath)).toBe(false);
+        expect(fs.existsSync(createdResume.pdfFilePath)).toBe(false);
         expect(fs.existsSync(resumePath)).toBe(false);
+
+        await Resume.deleteOne({ _id: createdResume._id });
     });
 
     it("POST /users/:userId/resumes/uploadPdf — error if not PDF", async () => {
@@ -125,5 +130,35 @@ describe("Upload Pdf to Resume", () => {
         // Clear
         fs.unlinkSync(bigPdfPath);
         expect(fs.existsSync(bigPdfPath)).toBe(false);
+    });
+
+    it("POST /users/:userId/resumes/uploadPdf — should update resume in DB with file path", async () => {
+        const userId = loggedUser.userId;
+        const token = loggedUser.token;
+
+        // 1. generate pdf
+        const { stream, resumePath } = generateResumePdf(validResume, "../../../cache");
+        await new Promise((resolve, reject) => {
+            stream.on("finish", resolve);
+            stream.on("error", reject);
+        });
+
+        // 2. Upload file and create new resume
+        const createdResumeResponse = await request(app)
+            .post(`/users/${userId}/resumes/uploadPdf`)
+            .set("Authorization", `Bearer ${token}`)
+            .attach("upload_file", resumePath)
+            .expect(201);
+        const createdResume = createdResumeResponse.body;
+
+        // 3. Check DB field filePath
+        expect(createdResume.pdfFilePath).toBeDefined();
+        expect(fs.existsSync(createdResume.pdfFilePath)).toBe(true);
+
+        // 4. Clean up
+        fs.unlinkSync(createdResume.pdfFilePath);
+        fs.unlinkSync(resumePath);
+
+        await Resume.deleteOne({ _id: createdResume._id });
     });
 });

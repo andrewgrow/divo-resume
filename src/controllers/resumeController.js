@@ -1,9 +1,5 @@
 // /src/controllers/resumeController.js
 
-import { v4 as UUIDv4 } from 'uuid';
-import {filePath} from "../utils/wrappers/filePath.js";
-import PDFDocument from "pdfkit";
-import fs from "fs";
 import {
     getAllResume,
     createOne as createResume,
@@ -53,7 +49,7 @@ export async function createOne(req, res) {
 
     // we cannot create another main resume, so we need to check it
     if (resume.isMainResume) {
-        // Сбросить isMainResume у всех других резюме этого пользователя
+        // reset isMainResume other resumes
         await setAllResumeAsNonMain(userId)
     }
 
@@ -68,7 +64,6 @@ export async function createOne(req, res) {
 
 export async function createPdf(req, res) {
     try {
-        // const resume = Object.assign({}, req.foundResume);
         const resume = req.foundResume;
         const { stream, resumePath } = generateResumePdf(resume);
         await new Promise((resolve, reject) => {
@@ -117,5 +112,19 @@ export async function updateOne(req, res) {
 }
 
 export async function uploadPdf(req, res) {
-    res.status(200).json({ isMainResume: req.body.isMainResume, filePath: req.file.path });
+    const userId = req.params.userId;
+    const resume = { userId: userId, pdfFilePath: req.file.path };
+    if (req.body.isMainResume === "true") {
+        await setAllResumeAsNonMain(userId)
+        resume.isMainResume = true
+    } else {
+        resume.isMainResume = false
+    }
+    try {
+        const createdResume = await createResume(resume);
+        res.status(201).json(createdResume);
+    } catch (err) {
+        console.log(`Error during create resume from PDF: ${err.message}`);
+        return res.status(400).json({ error: err });
+    }
 }
