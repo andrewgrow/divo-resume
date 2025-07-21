@@ -114,7 +114,7 @@ describe("Create New Resume", () => {
         const secondResume = await request(app)
             .post(`/users/${userId}/resumes`)
             .set("Authorization", `Bearer ${token}`)
-            .send({ ...validResume, name: "New Main Resume", isMainResume: true })
+            .send({ ...validResume, userName: { value: "New Main Resume" }, isMainResume: true })
             .expect(201);
         const secondResumeId = secondResume.body._id;
         expect(secondResume.body.isMainResume).toBe(true);
@@ -127,8 +127,8 @@ describe("Create New Resume", () => {
         expect(allResumes.body.length).toBe(2)
         const mains = allResumes.body.filter(r => r.isMainResume === true);
         expect(mains.length).toBe(1);
-        expect(mains[0].name).toBe("New Main Resume");
-        expect(mains[0].name).toBe(secondResume.body.name);
+        expect(mains[0].userName.value).toBe("New Main Resume");
+        expect(mains[0].userName.value).toBe(secondResume.body.userName.value);
 
         // clear
         await Resume.deleteMany({_id: {$in: [firstResumeId, secondResumeId] }});

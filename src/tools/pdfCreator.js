@@ -3,48 +3,52 @@
 import PDFDocument from "pdfkit";
 import fs from "fs";
 import { v4 as UUIDv4 } from "uuid";
-import {filePath} from "../utils/wrappers/filePath.js";
+import { filePath } from "../utils/wrappers/filePath.js";
+import path from "path";
 
 export function generateResumePdf(resume, cacheDir = "../../../cache") {
     const resumeFileName = `${UUIDv4()}.pdf`;
     const resumePath = filePath(`${cacheDir}/${resumeFileName}`);
     const doc = new PDFDocument({ margin: 40 });
+
+    doc.registerFont('roboto', path.resolve("./assets/fonts/roboto/Roboto-Regular.ttf"));
+    doc.registerFont('roboto-bold', path.resolve("./assets/fonts/roboto/Roboto-Bold.ttf"));
+    doc.registerFont('roboto-italic', path.resolve("./assets/fonts/roboto/Roboto-Italic.ttf"));
+    doc.registerFont('roboto-bolditalic', path.resolve("./assets/fonts/roboto/Roboto-BoldItalic.ttf"));
+
     const stream = fs.createWriteStream(resumePath);
     doc.pipe(stream);
 
+    doc.font('roboto'); // default
+
     // Name and headline
-    if (resume.name) {
-        doc.fontSize(18).text(resume.name, { bold: true });
+    if (resume.userName) {
+        doc.fontSize(18).text(resume.userName.value, { bold: true });
     }
-    if (resume.headline) {
-        doc.fontSize(12).text(resume.headline);
+    if (resume.userHeadline) {
+        doc.fontSize(12).text(resume.userHeadline.value);
     }
-    if (resume.name || resume.headline) {
+    if (resume.userName || resume.userHeadline) {
         doc.moveDown();
     }
 
     // Location and summary
-    if (resume.location) {
-        doc.fontSize(10).text(`Location: ${resume.location}`);
+    if (resume.userLocation) {
+        doc.fontSize(10).text(`${resume.userLocation.printTitle || "Location"}: ${resume.userLocation.value}`);
         doc.moveDown(0.5);
     }
-    if (resume.summary) {
-        doc.text(resume.summary, { width: 500 });
+    if (resume.userSummary) {
+        doc.text(resume.userSummary.value, { width: 500 });
         doc.moveDown();
     }
 
-    // Skills section
-    if (resume.skills && Object.values(resume.skills).some(arr => Array.isArray(arr) && arr.length)) {
-        doc.fontSize(12).text('Skills', { underline: true });
-        const skillSections = [
-            "programming_languages", "architecture", "frameworks", "libraries",
-            "cloud", "design_patterns", "development_tools", "ci_cd", "monitoring", "testing"
-        ];
-        for (const section of skillSections) {
-            if (resume.skills[section]?.length) {
+    // Skills
+    if (resume.userSkills && Array.isArray(resume.userSkills.value) && resume.userSkills.value.length) {
+        doc.fontSize(12).text(resume.userSkills.printTitle || "Skills", { underline: true });
+        for (const section of resume.userSkills.value) {
+            if (section.items && section.items.length) {
                 doc.fontSize(10).text(
-                    section.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) +
-                    ": " + resume.skills[section].join(', ')
+                    `${section.printTitle}: ${section.items.join(', ')}`
                 );
             }
         }
@@ -52,32 +56,43 @@ export function generateResumePdf(resume, cacheDir = "../../../cache") {
     }
 
     // Experience
-    if (Array.isArray(resume.experience) && resume.experience.length) {
-        doc.fontSize(12).text('Work Experience', { underline: true });
-        for (const job of resume.experience) {
+    if (resume.userExperience && Array.isArray(resume.userExperience.value) && resume.userExperience.value.length) {
+        doc.fontSize(12).text(resume.userExperience.printTitle || "Work Experience", { underline: true });
+        for (const job of resume.userExperience.value) {
+            // Основная строка (позиция, компания, даты)
             doc.fontSize(10).text(
-                [job.title, job.company].filter(Boolean).join(", ") +
-                ((job.date_start || job.date_end) ? ` (${job.date_start || ""} – ${job.date_end || ""})` : "")
+                [job.printTitle, job.company].filter(Boolean).join(", ") +
+                ((job.dateStart || job.dateEnd) ? ` (${job.dateStart || ""} – ${job.dateEnd || ""})` : "")
             );
             if (job.location) doc.text(`Location: ${job.location}`);
+
             // Projects
             if (Array.isArray(job.projects) && job.projects.length) {
                 doc.moveDown(0.25);
                 doc.fontSize(10).text('Projects:', { underline: true });
                 for (const project of job.projects) {
-                    if (project.title) doc.fontSize(10).text(`• ${project.title}`);
+                    if (project.printTitle) doc.fontSize(10).text(`• ${project.printTitle}`);
                     if (project.description) {
                         doc.fontSize(9).text(project.description, { indent: 16 });
                     }
-                    if (Array.isArray(project.technologies) && project.technologies.length) {
-                        doc.fontSize(9).text(
-                            'Technologies: ' + project.technologies.join(', '),
-                            { indent: 16 }
-                        );
+                    if (Array.isArray(project.skillsOrTools) && project.skillsOrTools.length) {
+                        // Собираем по типам: technologies, tools, soft skills, methods
+                        const byType = {};
+                        for (const skill of project.skillsOrTools) {
+                            if (!byType[skill.type]) byType[skill.type] = [];
+                            byType[skill.type].push(skill.name);
+                        }
+                        for (const [type, names] of Object.entries(byType)) {
+                            doc.fontSize(9).text(
+                                `${type[0].toUpperCase() + type.slice(1).replace('_', ' ')}: ${names.join(', ')}`,
+                                { indent: 16 }
+                            );
+                        }
                     }
                     doc.moveDown(0.15);
                 }
             }
+
             // Achievements
             if (Array.isArray(job.achievements) && job.achievements.length) {
                 doc.text('Achievements:');
@@ -90,20 +105,20 @@ export function generateResumePdf(resume, cacheDir = "../../../cache") {
     }
 
     // Education
-    if (Array.isArray(resume.education) && resume.education.length) {
-        doc.fontSize(12).text('Education', { underline: true });
-        for (const edu of resume.education) {
+    if (resume.userEducation && Array.isArray(resume.userEducation.value) && resume.userEducation.value.length) {
+        doc.fontSize(12).text(resume.userEducation.printTitle || "Education", { underline: true });
+        for (const edu of resume.userEducation.value) {
             const degreeLine = [edu.degree && `${edu.degree} in ${edu.specialty}`, edu.institution].filter(Boolean).join(", ");
-            const dates = (edu.date_start || edu.date_end) ? ` (${edu.date_start || ""} – ${edu.date_end || ""})` : "";
+            const dates = (edu.dateStart || edu.dateEnd) ? ` (${edu.dateStart || ""} – ${edu.dateEnd || ""})` : "";
             doc.fontSize(10).text(`${degreeLine}${dates}`);
         }
         doc.moveDown();
     }
 
     // Languages
-    if (Array.isArray(resume.languages) && resume.languages.length) {
-        doc.fontSize(12).text('Languages', { underline: true });
-        for (const lang of resume.languages) {
+    if (resume.userLanguages && Array.isArray(resume.userLanguages.value) && resume.userLanguages.value.length) {
+        doc.fontSize(12).text(resume.userLanguages.printTitle || "Languages", { underline: true });
+        for (const lang of resume.userLanguages.value) {
             if (lang.language || lang.level) {
                 doc.fontSize(10).text(
                     [lang.language, lang.level].filter(Boolean).join(": ")
@@ -114,25 +129,24 @@ export function generateResumePdf(resume, cacheDir = "../../../cache") {
     }
 
     // Soft skills
-    if (Array.isArray(resume.soft_skills) && resume.soft_skills.length) {
-        doc.fontSize(12).text('Soft Skills', { underline: true });
-        doc.fontSize(10).text(resume.soft_skills.join(', '));
+    if (resume.userSoftSkills && Array.isArray(resume.userSoftSkills.value) && resume.userSoftSkills.value.length) {
+        doc.fontSize(12).text(resume.userSoftSkills.printTitle || "Soft Skills", { underline: true });
+        doc.fontSize(10).text(resume.userSoftSkills.value.join(', '));
         doc.moveDown();
     }
 
     // Contacts
-    if (resume.contacts && (resume.contacts.email || resume.contacts.linkedin)) {
-        doc.fontSize(12).text('Contacts', { underline: true });
-        if (resume.contacts.email) {
-            doc.fontSize(10).text(`Email: ${resume.contacts.email}`);
-        }
-        if (resume.contacts.linkedin) {
-            doc.text(`LinkedIn: ${resume.contacts.linkedin}`);
+    if (resume.userContacts && Array.isArray(resume.userContacts.value) && resume.userContacts.value.length) {
+        doc.fontSize(12).text(resume.userContacts.printTitle || "Contacts", { underline: true });
+        for (const contact of resume.userContacts.value) {
+            if (contact.value) {
+                doc.fontSize(10).text(`${contact.printTitle}: ${contact.value}`);
+            }
         }
         doc.moveDown();
     }
-    doc.moveDown();
 
+    doc.moveDown();
     doc.end();
 
     return { stream, resumePath };

@@ -41,8 +41,8 @@ describe("Update Resume", () => {
         // Update partially
         const updatedData = {
             ...validResume,
-            name: "Updated Name",
-            headline: "Updated Headline"
+            userName: { value: "Updated Name" },
+            userHeadline: { value: "Updated Headline" }
         };
 
         const updateResp = await request(app)
@@ -50,12 +50,13 @@ describe("Update Resume", () => {
             .set("Authorization", `Bearer ${token}`)
             .send(updatedData)
             .expect(200);
+        const updatedResume = await updateResp.body;
 
-        console.info(updateResp.body);
+        expect(updatedResume._id).toBe(resumeId);
+        expect(updatedResume.userName.value).toBe("Updated Name");
+        expect(updatedResume.userHeadline.value).toBe("Updated Headline");
 
-        expect(updateResp.body._id).toBe(resumeId);
-        expect(updateResp.body.name).toBe("Updated Name");
-        expect(updateResp.body.headline).toBe("Updated Headline");
+        await Resume.deleteOne({_id: updatedResume._id})
     });
 
     it("PUT /users/:userId/resumes/:resumeId — 400 if resumeId is invalid", async () => {

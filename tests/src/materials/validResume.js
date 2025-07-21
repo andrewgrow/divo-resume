@@ -2,44 +2,99 @@
 
 export const validResume = {
     isMainResume: false,
-    name: "John Test User",
-    headline: "Software Quality Assurance Engineer",
-    location: "London",
-    summary: "Experienced software QA",
-    skills: {
-        programming_languages: ["JS"],
-        architecture: ["MVC"],
-        frameworks: ["Express"],
-        libraries: ["Jest"],
-        cloud: ["AWS"],
-        design_patterns: ["Singleton"],
-        development_tools: ["VSCode"],
-        ci_cd: ["GitHub Actions"],
-        monitoring: ["Sentry"],
-        testing: ["Mocha"]
+    pdfFilePath: null,
+
+    userName: {
+        printTitle: "Name",
+        value: "John Test User"
     },
-    experience: [{
-        title: "QA Engineer",
-        company: "TestCorp",
-        date_start: "2023-01-01",
-        date_end: "2024-01-01",
-        location: "Moscow",
-        achievements: ["Automated tests"]
-    }],
-    education: [{
-        institution: "Test University",
-        degree: "Bachelor",
-        specialty: "IT",
-        date_start: "2018-09-01",
-        date_end: "2022-06-30"
-    }],
-    languages: [{
-        language: "English",
-        level: "Native"
-    }],
-    soft_skills: ["Teamwork"],
-    contacts: {
-        email: "john@example.com",
-        linkedin: "john-profile"
+    userHeadline: {
+        printTitle: "Headline",
+        value: "Software Quality Assurance Engineer"
+    },
+    userLocation: {
+        printTitle: "Location",
+        value: "London"
+    },
+    userSummary: {
+        printTitle: "Summary",
+        value: "Experienced software QA"
+    },
+    userSkills: {
+        printTitle: "Skills",
+        value: [
+            {
+                printTitle: "Programming Languages",
+                items: ["JS"]
+            },
+            {
+                printTitle: "Frameworks",
+                items: ["Express"]
+            }
+        ]
+    },
+    userExperience: {
+        printTitle: "Work Experience",
+        value: [
+            {
+                printTitle: "QA Engineer",
+                company: "TestCorp",
+                dateStart: "Jan 2023",
+                dateEnd: "Jan 2024",
+                location: "Moscow",
+                achievements: ["Automated tests"],
+                projects: [
+                    {
+                        printTitle: "Test Automation Project",
+                        description: "Automated regression tests for web app.",
+                        skillsOrTools: [
+                            { type: "technology", name: "Mocha" },
+                            { type: "tool", name: "Jest" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    userEducation: {
+        printTitle: "Education",
+        value: [
+            {
+                printTitle: "Bachelor",
+                institution: "Test University",
+                degree: "Bachelor",
+                specialty: "IT",
+                dateStart: "Sep 2018",
+                dateEnd: "Jun 2022"
+            }
+        ]
+    },
+    userLanguages: {
+        printTitle: "Languages",
+        value: [
+            {
+                language: "English",
+                level: "Native"
+            }
+        ]
+    },
+    userSoftSkills: {
+        printTitle: "Soft Skills",
+        value: ["Teamwork"]
+    },
+    userContacts: {
+        printTitle: "Contacts",
+        value: [
+            {
+                type: "user_email",
+                printTitle: "Email",
+                value: "john@example.com"
+            },
+            {
+                type: "user_linkedin",
+                printTitle: "LinkedIn",
+                value: "john-profile"
+            }
+        ]
     }
 };

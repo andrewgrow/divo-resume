@@ -2,68 +2,104 @@
 
 import mongoose from 'mongoose';
 
-const SkillsSchema = new mongoose.Schema({
-    programming_languages: {type: [String], required: false, default: []},
-    architecture: {type: [String], required: false, default: []},
-    frameworks: {type: [String], required: false, default: []},
-    libraries: {type: [String], required: false, default: []},
-    cloud: {type: [String], required: false, default: []},
-    design_patterns: {type: [String], required: false, default: []},
-    development_tools: {type: [String], required: false, default: []},
-    ci_cd: {type: [String], required: false, default: []},
-    monitoring: {type: [String], required: false, default: []},
-    testing: {type: [String], required: false, default: []},
-}, { _id: false })
+const StringBlockSchema = new mongoose.Schema({
+    printTitle: { type: String, required: false },
+    value: { type: String, required: false }
+}, { _id: false });
+
+const SkillCategorySchema = new mongoose.Schema({
+    printTitle: { type: String, required: false },
+    items: { type: [String], required: false, default: null }
+}, { _id: false });
+
+const UserSkillsSchema = new mongoose.Schema({
+    printTitle: { type: String, required: false },
+    value: { type: [SkillCategorySchema], required: false, default: null }
+}, { _id: false });
+
+const SkillOrToolSchema = new mongoose.Schema({
+    type: { type: String, required: false },
+    name: { type: String, required: false }
+}, { _id: false });
 
 const ProjectSchema = new mongoose.Schema({
-    title: {type: String, required: false, default: ""},
-    description: {type: String, required: false, default: ""},
-    technologies: {type: [String], required: false, default: []},
-}, {_id: false})
+    printTitle: { type: String, required: false },
+    description: { type: String, required: false },
+    skillsOrTools: { type: [SkillOrToolSchema], required: false, default: null }
+}, { _id: false });
 
 const ExperienceSchema = new mongoose.Schema({
-    title: {type: String, required: false, default: ""},
-    company: {type: String, required: false, default: ""},
-    date_start: {type: String, required: false, default: ""},
-    date_end: {type: String, required: false, default: ""},
-    location: {type: String, required: false, default: ""},
-    achievements:  {type: [String], required: false, default: []},
-    projects: { type: [ProjectSchema], required: false, default: [] }
-}, { _id: false })
+    printTitle: { type: String, required: false },
+    company: { type: String, required: false },
+    dateStart: { type: String, required: false },
+    dateEnd: { type: String, required: false },
+    location: { type: String, required: false },
+    achievements: { type: [String], required: false, default: null },
+    projects: { type: [ProjectSchema], required: false, default: null }
+}, { _id: false });
+
+const UserExperienceSchema = new mongoose.Schema({
+    printTitle: { type: String, required: false },
+    value: { type: [ExperienceSchema], required: false, default: null }
+}, { _id: false });
 
 const EducationSchema = new mongoose.Schema({
-    institution: {type: String, required: false, default: ""},
-    degree: {type: String, required: false, default: ""},
-    specialty: {type: String, required: false, default: ""},
-    date_start: {type: String, required: false, default: ""},
-    date_end: {type: String, required: false, default: ""},
-}, { _id: false })
+    printTitle: { type: String, required: false },
+    institution: { type: String, required: false },
+    degree: { type: String, required: false },
+    specialty: { type: String, required: false },
+    dateStart: { type: String, required: false },
+    dateEnd: { type: String, required: false }
+}, { _id: false });
+
+const UserEducationSchema = new mongoose.Schema({
+    printTitle: { type: String, required: false },
+    value: { type: [EducationSchema], required: false, default: null }
+}, { _id: false });
 
 const LanguageSchema = new mongoose.Schema({
-    language: {type: String, required: false, default: ""},
-    level: {type: String, required: false, default: ""},
-}, { _id: false })
+    language: { type: String, required: false },
+    level: { type: String, required: false }
+}, { _id: false });
+
+const UserLanguagesSchema = new mongoose.Schema({
+    printTitle: { type: String, required: false },
+    value: { type: [LanguageSchema], required: false, default: null }
+}, { _id: false });
+
+// userSoftSkills: value — массив строк
+const UserSoftSkillsSchema = new mongoose.Schema({
+    printTitle: { type: String, required: false },
+    value: { type: [String], required: false, default: null }
+}, { _id: false });
 
 const ContactSchema = new mongoose.Schema({
-    email: {type: String, required: false, default: ""},
-    linkedin:  {type: String, required: false, default: ""},
-}, { _id: false })
+    type: { type: String, required: false },
+    printTitle: { type: String, required: false },
+    value: { type: String, required: false }
+}, { _id: false });
+
+const UserContactsSchema = new mongoose.Schema({
+    printTitle: { type: String, required: false },
+    value: { type: [ContactSchema], required: false, default: null }
+}, { _id: false });
 
 const ResumeSchema = new mongoose.Schema({
-    userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
-    jobIds: {type: [mongoose.Schema.Types.ObjectId], ref: 'Job', required: false, default: null},
-    isMainResume: {type: Boolean, required: true},
-    pdfFilePath: {type: String, required: false, default: null},
-    name: {type: String, required: false, default: null},
-    headline: {type: String, required: false, default: null},
-    location: {type: String, required: false, default: null},
-    summary:  {type: String, required: false, default: null},
-    skills: {type: SkillsSchema, required: false, default: null},
-    experience: {type: [ExperienceSchema], required: false, default: null},
-    education: {type: [EducationSchema], required: false, default: null},
-    languages: {type: [LanguageSchema], required: false, default: null},
-    soft_skills: {type: [String], required: false, default: null},
-    contacts: {type: ContactSchema, required: false, default: null},
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    jobIds: { type: [mongoose.Schema.Types.ObjectId], ref: 'Job', required: false, default: null },
+    isMainResume: { type: Boolean, required: true },
+    pdfFilePath: { type: String, required: false, default: null },
+
+    userName: { type: StringBlockSchema, required: false },
+    userHeadline: { type: StringBlockSchema, required: false },
+    userLocation: { type: StringBlockSchema, required: false },
+    userSummary: { type: StringBlockSchema, required: false },
+    userSkills: { type: UserSkillsSchema, required: false },
+    userExperience: { type: UserExperienceSchema, required: false },
+    userEducation: { type: UserEducationSchema, required: false },
+    userLanguages: { type: UserLanguagesSchema, required: false },
+    userSoftSkills: { type: UserSoftSkillsSchema, required: false },
+    userContacts: { type: UserContactsSchema, required: false }
 }, { timestamps: true });
 
 export default mongoose.model('Resume', ResumeSchema);

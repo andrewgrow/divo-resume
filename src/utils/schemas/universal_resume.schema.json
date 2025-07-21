@@ -1,0 +1,426 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UniversalUserResumeSchema",
+  "type": "object",
+  "properties": {
+    "userName": {
+      "type": "object",
+      "properties": {
+        "printTitle": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "printTitle",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "userHeadline": {
+      "type": "object",
+      "properties": {
+        "printTitle": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "printTitle",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "userLocation": {
+      "type": "object",
+      "properties": {
+        "printTitle": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "printTitle",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "userSummary": {
+      "type": "object",
+      "properties": {
+        "printTitle": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "printTitle",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "userSkills": {
+      "type": "object",
+      "properties": {
+        "printTitle": {
+          "type": "string"
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "printTitle": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "printTitle",
+              "items"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "printTitle",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    "userExperience": {
+      "type": "object",
+      "properties": {
+        "printTitle": {
+          "type": "string",
+          "examples": ["Work Experience", "Professional Experience"]
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "printTitle": {
+                "type": "string"
+              },
+              "company": {
+                "type": "string",
+                "examples": ["Apple Corps Limited"]
+              },
+              "dateStart": {
+                "type": "string",
+                "pattern": "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4}$",
+                "examples": [
+                  "Sep 2017",
+                  "Oct 2012"
+                ]
+              },
+              "dateEnd": {
+                "type": "string",
+                "pattern": "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4}$",
+                "examples": [
+                  "Sep 2017",
+                  "Oct 2012"
+                ]
+              },
+              "location": {
+                "type": "string",
+                "examples": [
+                  "Warsaw, Poland",
+                  "Vienna, Austria"
+                ]
+              },
+              "achievements": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "examples": [
+                    "Implemented CI/CD pipeline reducing release time by 40%",
+                    "Increased sales by 25% within one year",
+                    "Organized annual team-building events for 100+ participants",
+                    "Developed and launched a new product line",
+                    "Received Employee of the Month award"
+                  ]
+                }
+              },
+              "projects": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "printTitle": {
+                      "type": "string",
+                      "examples": [
+                        "Mobile Banking App",
+                        "Inventory Management System",
+                        "Summer Language Camp"
+                      ]
+                    },
+                    "description": {
+                      "type": "string",
+                      "examples": [
+                        "Developed a cross-platform mobile banking application for corporate clients.",
+                        "Built an internal inventory management system to automate warehouse operations.",
+                        "Organized and supervised a two-week summer language camp for children."
+                      ]
+                    },
+                    "skillsOrTools": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "examples": ["technology", "tool", "soft_skill", "method"]
+                          },
+                          "name": {
+                            "type": "string",
+                            "examples": ["Kotlin", "MS Excel", "Team Leadership"]
+                          }
+                        },
+                        "required": ["type", "name"],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": ["printTitle", "description", "skillsOrTools"],
+                  "additionalProperties": false
+                }
+              }
+            },
+              "required": ["printTitle", "company", "dateStart", "dateEnd", "location", "achievements", "projects"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["printTitle", "value"],
+        "additionalProperties": false
+      },
+      "userEducation": {
+        "type": "object",
+        "properties": {
+          "printTitle": {
+            "type": "string",
+            "examples": [
+              "Education"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "printTitle": {
+                  "type": "string",
+                  "examples": [
+                    "Bachelor",
+                    "Master",
+                    "Secondary Education"
+                  ]
+                },
+                "institution": {
+                  "type": "string",
+                  "examples": [
+                    "University of Warsaw",
+                    "CNTU",
+                    "Technical High School"
+                  ]
+                },
+                "degree": {
+                  "type": "string",
+                  "examples": [
+                    "Bachelor of Science",
+                    "Master of Arts",
+                    "High School Diploma"
+                  ]
+                },
+                "specialty": {
+                  "type": "string",
+                  "examples": [
+                    "Computer Science",
+                    "Information Technology",
+                    "Applied Mathematics"
+                  ]
+                },
+                "dateStart": {
+                  "type": "string",
+                  "pattern": "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4}$",
+                  "examples": [
+                    "Sep 2017",
+                    "Oct 2012"
+                  ]
+                },
+                "dateEnd": {
+                  "type": "string",
+                  "pattern": "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) [0-9]{4}$",
+                  "examples": [
+                    "Jun 2021",
+                    "Jul 2016"
+                  ]
+                }
+              },
+              "required": [
+                "printTitle",
+                "institution",
+                "degree",
+                "specialty",
+                "dateStart",
+                "dateEnd"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "printTitle",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "userLanguages": {
+        "type": "object",
+        "properties": {
+          "printTitle": {
+            "type": "string",
+            "examples": [
+              "Languages"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "language": {
+                  "type": "string",
+                  "examples": [
+                    "English",
+                    "Polish",
+                    "Russian"
+                  ]
+                },
+                "level": {
+                  "type": "string",
+                  "examples": [
+                    "B2 Upper Intermediate",
+                    "C1 Advanced",
+                    "Native Speaker"
+                  ]
+                }
+              },
+              "required": [
+                "language",
+                "level"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "printTitle",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "userSoftSkills": {
+        "type": "object",
+        "properties": {
+          "printTitle": {
+            "type": "string",
+            "examples": [
+              "Soft Skills"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "examples": [
+                "Communication",
+                "Teamwork",
+                "Problem solving",
+                "Adaptability",
+                "Time management"
+              ]
+            }
+          }
+        },
+        "required": [
+          "printTitle",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      "userContacts": {
+        "type": "object",
+        "properties": {
+          "printTitle": {
+            "type": "string",
+            "examples": [
+              "Contacts"
+            ]
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "examples": [
+                    "user_email",
+                    "user_phone",
+                    "user_linkedin"
+                  ]
+                },
+                "printTitle": {
+                  "type": "string",
+                  "examples": [
+                    "Email",
+                    "Phone",
+                    "LinkedIn"
+                  ]
+                },
+                "value": {
+                  "type": "string",
+                  "examples": [
+                    "user@example.com",
+                    "+1234567890",
+                    "https://linkedin.com/in/test-user-name"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "printTitle",
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "printTitle",
+          "value"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [ "userName", "userHeadline", "userLocation", "userSummary", "userSkills", "userExperience", "userEducation", "userLanguages", "userSoftSkills", "userContacts" ],
+  "additionalProperties": false
+}
