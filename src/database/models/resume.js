@@ -89,7 +89,6 @@ const ResumeSchema = new mongoose.Schema({
     jobIds: { type: [mongoose.Schema.Types.ObjectId], ref: 'Job', required: false, default: null },
     isMainResume: { type: Boolean, required: true },
     pdfFilePath: { type: String, required: false, default: null },
-
     userName: { type: StringBlockSchema, required: false },
     userHeadline: { type: StringBlockSchema, required: false },
     userLocation: { type: StringBlockSchema, required: false },
@@ -99,7 +98,8 @@ const ResumeSchema = new mongoose.Schema({
     userEducation: { type: UserEducationSchema, required: false },
     userLanguages: { type: UserLanguagesSchema, required: false },
     userSoftSkills: { type: UserSoftSkillsSchema, required: false },
-    userContacts: { type: UserContactsSchema, required: false }
+    userContacts: { type: UserContactsSchema, required: false },
+    openaiResponseId: { type: String, required: false, default: null },
 }, { timestamps: true });
 
 export default mongoose.model('Resume', ResumeSchema);

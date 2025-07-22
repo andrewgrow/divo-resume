@@ -8,7 +8,8 @@ import {
     createPdf,
     deleteOne,
     updateOne,
-    uploadPdf
+    uploadPdf,
+    parseResumeFromPdf
 } from "../controllers/resumeController.js";
 import withMainResume from "../utils/wrappers/withMainResume.js";
 import withValidResumeId from "../utils/wrappers/withValidResumeId.js";
@@ -28,6 +29,12 @@ router.get("/:resumeId", withValidObjectIds(["userId", "resumeId"], getOne));
 router.post("/:resumeId/createPdf",
     withValidObjectIds(["userId", "resumeId"],
         withFoundResume(createPdf))
+)
+
+// POST /users/:userId/resumes/:resumeId/parseResumeFromPdf (parse Resume From PDF)
+router.post("/:resumeId/parseResumeFromPdf",
+    withValidObjectIds(["userId", "resumeId"],
+        withFoundResume(parseResumeFromPdf))
 )
 
 // POST /users/:userId/resumes (create new resume)

@@ -9,6 +9,12 @@ import {
 } from "../database/services/resumeService.js";
 import {updateOne as updateResume} from "../database/services/resumeService.js";
 import {generateResumePdf} from "../tools/pdfCreator.js";
+import {filePath} from "../utils/wrappers/filePath.js";
+import {readFile} from "fs/promises";
+import {responsesAPI} from "../tools/openAi.js";
+import {clearAiAnswer} from "../utils/clearing/clearAiAnswer.js";
+import path from "path";
+import fs from "fs";
 
 export async function getAll(req, res) {
     const userId = req.params.userId;
@@ -126,5 +132,101 @@ export async function uploadPdf(req, res) {
     } catch (err) {
         console.log(`Error during create resume from PDF: ${err.message}`);
         return res.status(400).json({ error: err });
+    }
+}
+
+export async function parseResumeFromPdf(req, res) {
+    const userId = req.params.userId;
+    const resume = req.foundResume;
+    if (!userId || !resume) {
+        return res.status(400).json({ error: "UserId or Resume not found" });
+    }
+
+    const resumeFilePath = resume.pdfFilePath // e.g. "/Users/hrow/WebstormProjects/Divo-Resume/cache/7d82b0c9-1110-4915-a9a8-be14e044fc09.pdf";
+    if (!resumeFilePath) {
+        return res.status(400).json({ message: `PDF File for the Resume ${resume._id} does not exist` });
+    }
+
+    const fileName = path.basename(resumeFilePath);
+
+    // PDF
+    const pdfAsBase64 = fs.readFileSync(resumeFilePath, "base64");
+
+    // Schema for the Response
+    const rawSchema = await readFile(
+        filePath('../schemas/universal_resume.schema.json'),
+        'utf-8'
+    );
+    const jsonSchema = JSON.parse(rawSchema);
+    const schemaName = jsonSchema.title;
+
+    // AI credentials
+    const token = req.foundAiToken;
+    const model = "gpt-4.1";
+
+    // Create Request
+    const taskText = `
+    Parse included resume.  Do not guess or invent any data. Use only the resume has.
+
+Identify all skills, competencies, tools, certifications, and relevant personal qualities listed in the source resume.
+
+Group these items into logical categories most relevant to the target profession. If categories already exist in the resume (e.g., “Programming Languages”, “Soft Skills”, “Certifications”), preserve and use them. Categories should reflect both hard skills (technical, professional, tool-related) and soft skills (communication, leadership, adaptability, etc.). Each category must have a clear and concise name (“printTitle”), for example:
+ - Examples for an IT professional: Programming Languages, Frameworks, Cloud, Testing, Development Tools, Soft Skills, etc.
+ - Examples for a Project Manager: Project Management Methodologies, Tools, Team Leadership, Reporting, Certifications, Soft Skills, etc.
+ - Examples for a Truck Driver: Driving Licenses, Vehicle Operation, Route Planning, Regulations, Maintenance, Cargo Handling, Languages, Soft Skills, etc.
+ - Examples for a Medical Representative: Therapeutic Areas, Product Knowledge, Sales Techniques, Regulatory & Compliance, CRM Tools, Soft Skills, Languages, etc.
+ - The same approach applies to other professions.
+
+Under each category, create an array of skills/items directly related to it. Avoid generic or unclear categories such as “Other”, “Various”, or “Etc.”. Each skill must fit precisely within its group.
+
+Reflect domain-specific vocabulary and key terms commonly used in job descriptions for this role (this will help with ATS and HR screening).
+
+The general purpose is to parse the data from the resume as precisely as possible and structure it accordingly.
+
+Return filled answer according to defined JSON schema. Fill all related fields. Use English for answers preparing.
+    `
+
+    const input = [
+        {
+            role: "user",
+            content: [
+                {
+                    type: "input_file",
+                    filename: fileName,
+                    file_data: `data:application/pdf;base64,${pdfAsBase64}`,
+                },
+                {
+                    type: "input_text",
+                    text: taskText,
+                },
+            ],
+        },
+    ]
+
+    try {
+        const response = await responsesAPI(
+            {model, input, token, jsonSchema, schemaName}
+        )
+        console.log(`[${req.requestId}] Response from OpenAi:\n${JSON.stringify(response)}`)
+        const result = clearAiAnswer(response.output_text)
+        result.openai_response_id = response.id // add to the Result Object the OpenAi Request ID
+
+        resume.userName = result.userName;
+        resume.userHeadline = result.userHeadline;
+        resume.userLocation = result.userLocation;
+        resume.userSummary = result.userSummary;
+        resume.userSkills = result.userSkills;
+        resume.userExperience = result.userExperience;
+        resume.userEducation = result.userEducation;
+        resume.userLanguages = result.languages;
+        resume.userSoftSkills = result.userSoftSkills;
+        resume.userContacts = result.userContacts;
+        resume.openaiResponseId = result.openai_response_id;
+        await updateResume(resume);
+
+        res.json(resume);
+    }  catch (e) {
+        console.error(`[${req.requestId}] [OpenAI Error]:`, e);
+        res.status(500).json({ error: String(e) });
     }
 }

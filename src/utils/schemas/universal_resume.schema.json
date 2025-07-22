@@ -382,9 +382,9 @@
                 "type": {
                   "type": "string",
                   "examples": [
-                    "user_email",
-                    "user_phone",
-                    "user_linkedin"
+                    "email",
+                    "phone",
+                    "linkedin"
                   ]
                 },
                 "printTitle": {
@@ -419,8 +419,7 @@
         ],
         "additionalProperties": false
       }
-    }
-  },
+    },
   "required": [ "userName", "userHeadline", "userLocation", "userSummary", "userSkills", "userExperience", "userEducation", "userLanguages", "userSoftSkills", "userContacts" ],
   "additionalProperties": false
 }
