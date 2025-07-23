@@ -15,6 +15,7 @@ import {responsesAPI} from "../tools/openAi.js";
 import {clearAiAnswer} from "../utils/clearing/clearAiAnswer.js";
 import path from "path";
 import fs from "fs";
+import mapResumeSchemaToResumeModel from "../utils/mappers/mapResumeSchemaToResumeModel.js";
 
 export async function getAll(req, res) {
     const userId = req.params.userId;
@@ -137,14 +138,14 @@ export async function uploadPdf(req, res) {
 
 export async function parseResumeFromPdf(req, res) {
     const userId = req.params.userId;
-    const resume = req.foundResume;
-    if (!userId || !resume) {
+    const resumeAsModel = req.foundResume;
+    if (!userId || !resumeAsModel) {
         return res.status(400).json({ error: "UserId or Resume not found" });
     }
 
-    const resumeFilePath = resume.pdfFilePath // e.g. "/Users/hrow/WebstormProjects/Divo-Resume/cache/7d82b0c9-1110-4915-a9a8-be14e044fc09.pdf";
+    const resumeFilePath = resumeAsModel.pdfFilePath // e.g. "/Users/hrow/WebstormProjects/Divo-Resume/cache/7d82b0c9-1110-4915-a9a8-be14e044fc09.pdf";
     if (!resumeFilePath) {
-        return res.status(400).json({ message: `PDF File for the Resume ${resume._id} does not exist` });
+        return res.status(400).json({ message: `PDF File for the Resume ${resumeAsModel._id} does not exist` });
     }
 
     const fileName = path.basename(resumeFilePath);
@@ -208,23 +209,14 @@ Return filled answer according to defined JSON schema. Fill all related fields. 
             {model, input, token, jsonSchema, schemaName}
         )
         console.log(`[${req.requestId}] Response from OpenAi:\n${JSON.stringify(response)}`)
-        const result = clearAiAnswer(response.output_text)
-        result.openai_response_id = response.id // add to the Result Object the OpenAi Request ID
+        const resumeAsSchema = clearAiAnswer(response.output_text)
+        resumeAsSchema.openaiResponseId = response.id // add to the Result Object the OpenAi Request ID
 
-        resume.userName = result.userName;
-        resume.userHeadline = result.userHeadline;
-        resume.userLocation = result.userLocation;
-        resume.userSummary = result.userSummary;
-        resume.userSkills = result.userSkills;
-        resume.userExperience = result.userExperience;
-        resume.userEducation = result.userEducation;
-        resume.userLanguages = result.languages;
-        resume.userSoftSkills = result.userSoftSkills;
-        resume.userContacts = result.userContacts;
-        resume.openaiResponseId = result.openai_response_id;
-        await updateResume(resume);
+        mapResumeSchemaToResumeModel(resumeAsModel, resumeAsSchema)
 
-        res.json(resume);
+        await updateResume(resumeAsModel);
+
+        res.json(resumeAsModel);
     }  catch (e) {
         console.error(`[${req.requestId}] [OpenAI Error]:`, e);
         res.status(500).json({ error: String(e) });

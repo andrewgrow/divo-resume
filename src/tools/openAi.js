@@ -40,7 +40,8 @@ import { OpenAI } from "openai";
  * @param {string} params.schemaName - Unique name of the Schema for response
  * @returns {Promise<any>} Model response
  */
-export async function responsesAPI({ model, input, token, jsonSchema, schemaName, previousResponseId }) {
+export async function responsesAPI({ model, input, token = "", jsonSchema, schemaName, previousResponseId }) {
+    console.log(`openAi token for request: ${token}`);
     const openai = new OpenAI({ apiKey: token });
 
     // base question object

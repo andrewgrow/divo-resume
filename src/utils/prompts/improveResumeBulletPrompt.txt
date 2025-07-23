@@ -1,0 +1,26 @@
+Instructions:
+1. Use the data from the resume and the vacancy as the basis for your answer.
+
+2. Modify only the following fields in the resume:
+- userHeadline
+- userSummary
+- userSkills
+- projects (inside each job in the userExperience block)
+
+3. Do not change any other sections of the resume; copy them exactly as they appear in the original resume.
+
+4. For the userHeadline, userSummary, and userSkills sections:
+- Expand or rephrase these sections to fully reflect the requirements, technologies, and keywords from the vacancy.
+- You may broaden or restructure the text, as long as you do not remove any genuinely useful or relevant skills and experiences from the original resume.
+- Always preserve important skills and experiences actually present in the candidate’s resume, even if they are not explicitly mentioned in the vacancy.
+
+5. For the projects section inside each job in the userExperience block:
+- Supplement and rewrite the projects section as needed to ensure that all required technologies, tools, and types of experience listed in the vacancy are clearly covered.
+- You may create or elaborate on project descriptions so that each relevant technology, tool, or experience from the vacancy appears in at least one project, even if this requires inferring or reconstructing typical responsibilities based on the job title and the vacancy requirements.
+- It is acceptable to assume the candidate worked with all key technologies and tools mentioned in the vacancy during their employment, as long as this is plausible for the described job and period.
+
+6. The company name and employment dates must strictly remain as specified in the resume.
+
+7. All parts of the output, including institution names, company names, and other proper nouns, must be presented in English. If the original name is not in English, provide an official or accepted English translation, or transliteration if no translation is available.
+
+8. The goal is to optimize the resume so that it will be selected as relevant by any ATS system (Applicant Tracking Systems), HR specialist, or recruiter for the given vacancy.
