@@ -59,7 +59,7 @@ export function generateResumePdf(resume, cacheDir = "../../../cache") {
     if (resume.userExperience && Array.isArray(resume.userExperience.value) && resume.userExperience.value.length) {
         doc.fontSize(12).text(resume.userExperience.printTitle || "Work Experience", { underline: true });
         for (const job of resume.userExperience.value) {
-            // Основная строка (позиция, компания, даты)
+            // Main row (position, company, dates)
             doc.fontSize(10).text(
                 [job.printTitle, job.company].filter(Boolean).join(", ") +
                 ((job.dateStart || job.dateEnd) ? ` (${job.dateStart || ""} – ${job.dateEnd || ""})` : "")
@@ -76,7 +76,7 @@ export function generateResumePdf(resume, cacheDir = "../../../cache") {
                         doc.fontSize(9).text(project.description, { indent: 16 });
                     }
                     if (Array.isArray(project.skillsOrTools) && project.skillsOrTools.length) {
-                        // Собираем по типам: technologies, tools, soft skills, methods
+                        // Build by types: technologies, tools, soft skills, methods
                         const byType = {};
                         for (const skill of project.skillsOrTools) {
                             if (!byType[skill.type]) byType[skill.type] = [];
