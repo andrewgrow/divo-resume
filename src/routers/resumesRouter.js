@@ -20,10 +20,10 @@ import withAiToken from "../utils/wrappers/withAiToken.js";
 
 const router = express.Router({ mergeParams: true });
 
-// GET /users/:userId/resumes/main (return the primary resume)
+// GET /api/users/:userId/resumes/main (return the primary resume)
 /**
  * @openapi
- * /users/{userId}/resumes/main:
+ * /api/users/{userId}/resumes/main:
  *   get:
  *     summary: Get the user's main resume
  *     description: Returns the primary (main) resume for the specified user. Requires authentication.
@@ -57,10 +57,10 @@ router.get("/main", withValidObjectIds(
     withMainResume(getOne)
 ));
 
-// GET /users/:userId/resumes/:resumeId (return an existing resume)
+// GET /api/users/:userId/resumes/:resumeId (return an existing resume)
 /**
  * @openapi
- * /users/{userId}/resumes/{resumeId}:
+ * /api/users/{userId}/resumes/{resumeId}:
  *   get:
  *     summary: Get a specific resume by ID
  *     description: Returns the resume with the specified ID for the specified user. Requires authentication.
@@ -100,10 +100,10 @@ router.get("/:resumeId", withValidObjectIds(
     )
 );
 
-// POST /users/:userId/resumes/:resumeId/createPdf (create PDF from resume)
+// POST /api/users/:userId/resumes/:resumeId/createPdf (create PDF from resume)
 /**
  * @openapi
- * /users/{userId}/resumes/{resumeId}/createPdf:
+ * /api/users/{userId}/resumes/{resumeId}/createPdf:
  *   post:
  *     summary: Create a PDF from a resume
  *     description: Generates a PDF document from the specified resume. Requires authentication.
@@ -144,10 +144,10 @@ router.post("/:resumeId/createPdf",
     )
 )
 
-// POST /users/:userId/resumes/:resumeId/parseResumeFromPdf (parse Resume from PDF via AI)
+// POST /api/users/:userId/resumes/:resumeId/parseResumeFromPdf (parse Resume from PDF via AI)
 /**
  * @openapi
- * /users/{userId}/resumes/{resumeId}/parseResumeFromPdf:
+ * /api/users/{userId}/resumes/{resumeId}/parseResumeFromPdf:
  *   post:
  *     summary: Parse resume content from a PDF using AI
  *     description: Uses AI to parse the content of a resume from its PDF representation. Requires authentication and an AI token.
@@ -196,10 +196,10 @@ router.post("/:resumeId/parseResumeFromPdf",
     )
 )
 
-// POST /users/:userId/resumes (create new resume from JSON)
+// POST /api/users/:userId/resumes (create new resume from JSON)
 /**
  * @openapi
- * /users/{userId}/resumes:
+ * /api/users/{userId}/resumes:
  *   post:
  *     summary: Create a new resume
  *     description: Creates a new resume for the specified user from a JSON object. Requires authentication.
@@ -234,10 +234,10 @@ router.post("/:resumeId/parseResumeFromPdf",
  */
 router.post("/", createOne);
 
-// DELETE /users/:userId/resumes/:resumeId (delete a resume)
+// DELETE /api/users/:userId/resumes/:resumeId (delete a resume)
 /**
  * @openapi
- * /users/{userId}/resumes/{resumeId}:
+ * /api/users/{userId}/resumes/{resumeId}:
  *   delete:
  *     summary: Delete a resume
  *     description: Deletes the resume with the specified ID for the specified user. Requires authentication.
@@ -284,10 +284,10 @@ router.delete("/:resumeId", withValidObjectIds(
     deleteOne)
 );
 
-// GET /users/:userId/resumes (return all user's resumes
+// GET /api/users/:userId/resumes (return all user's resumes
 /**
  * @openapi
- * /users/{userId}/resumes:
+ * /api/users/{userId}/resumes:
  *   get:
  *     summary: Get all resumes for a user
  *     description: Returns all resumes for the specified user. Requires authentication.
@@ -318,10 +318,10 @@ router.delete("/:resumeId", withValidObjectIds(
  */
 router.get("/", getAll);
 
-// PUT /users/:userId/resumes/:resumeId (update an existing resume)
+// PUT /api/users/:userId/resumes/:resumeId (update an existing resume)
 /**
  * @openapi
- * /users/{userId}/resumes/{resumeId}:
+ * /api/users/{userId}/resumes/{resumeId}:
  *   put:
  *     summary: Update a resume
  *     description: Updates the specified resume for the specified user. Requires authentication.
@@ -364,10 +364,10 @@ router.get("/", getAll);
  */
 router.put("/:resumeId", withValidResumeId(updateOne));
 
-// POST /users/:userId/resumes/uploadPdf (upload PDF and add it to new resume)
+// POST /api/users/:userId/resumes/uploadPdf (upload PDF and add it to new resume)
 /**
  * @openapi
- * /users/{userId}/resumes/uploadPdf:
+ * /api/users/{userId}/resumes/uploadPdf:
  *   post:
  *     summary: Upload a PDF file and create a new resume
  *     description: Uploads a PDF file and creates a new resume for the specified user based on its content. Requires authentication.

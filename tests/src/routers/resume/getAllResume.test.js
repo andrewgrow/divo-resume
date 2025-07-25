@@ -30,33 +30,33 @@ describe("Get All Resume", () => {
         await closeDb();
     });
 
-    it("GET /users/:userId/resumes — 400 if userId is not valid", async () => {
+    it("GET /api/users/:userId/resumes — 400 if userId is not valid", async () => {
         const token = loggedUser.token;
 
         const invalidUserId = "notAnObjectId";
         const res = await request(app)
-            .get(`/users/${invalidUserId}/resumes`)
+            .get(`/api/users/${invalidUserId}/resumes`)
             .set("Authorization", `Bearer ${token}`)
             .expect(400);
 
         expect(res.body).toHaveProperty("error");
     });
 
-    it("GET /users/:userId/resumes — 401 if not token", async () => {
+    it("GET /api/users/:userId/resumes — 401 if not token", async () => {
         const userId = loggedUser.userId;
 
         await request(app)
-            .get(`/users/${userId}/resumes`)
+            .get(`/api/users/${userId}/resumes`)
             .expect(401);
     });
 
-    it("GET /users/:userId/resumes returns all resumes", async () => {
+    it("GET /api/users/:userId/resumes returns all resumes", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         // check empty collection
         await request(app)
-            .get(`/users/${userId}/resumes`)
+            .get(`/api/users/${userId}/resumes`)
             .set("Authorization", `Bearer ${token}`)
             .expect(404); // because not created yet
 
@@ -64,7 +64,7 @@ describe("Get All Resume", () => {
 
         // Check OK result
         const response = await request(app)
-            .get(`/users/${userId}/resumes`)
+            .get(`/api/users/${userId}/resumes`)
             .set("Authorization", `Bearer ${token}`)
             .expect(200);
 

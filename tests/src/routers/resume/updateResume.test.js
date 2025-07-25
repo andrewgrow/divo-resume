@@ -33,7 +33,7 @@ describe("Update Resume", () => {
         await closeDb();
     });
 
-    it("PUT /users/:userId/resumes/:resumeId — successful update user's resume", async () => {
+    it("PUT /api/users/:userId/resumes/:resumeId — successful update user's resume", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
         const resumeId = resume._id;
@@ -46,7 +46,7 @@ describe("Update Resume", () => {
         };
 
         const updateResp = await request(app)
-            .put(`/users/${userId}/resumes/${resumeId}`)
+            .put(`/api/users/${userId}/resumes/${resumeId}`)
             .set("Authorization", `Bearer ${token}`)
             .send(updatedData)
             .expect(200);
@@ -59,13 +59,13 @@ describe("Update Resume", () => {
         await Resume.deleteOne({_id: updatedResume._id})
     });
 
-    it("PUT /users/:userId/resumes/:resumeId — 400 if resumeId is invalid", async () => {
+    it("PUT /api/users/:userId/resumes/:resumeId — 400 if resumeId is invalid", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         const invalidResumeId = "notAnObjectId";
         const updateResp = await request(app)
-            .put(`/users/${userId}/resumes/${invalidResumeId}`)
+            .put(`/api/users/${userId}/resumes/${invalidResumeId}`)
             .set("Authorization", `Bearer ${token}`)
             .send(validResume)
             .expect(400);
@@ -73,13 +73,13 @@ describe("Update Resume", () => {
         expect(updateResp.body).toHaveProperty("error");
     });
 
-    it("PUT /users/:userId/resumes/:resumeId — 404 if resume not found", async () => {
+    it("PUT /api/users/:userId/resumes/:resumeId — 404 if resume not found", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         const notExistId = new mongoose.Types.ObjectId().toString();
         const updateResp = await request(app)
-            .put(`/users/${userId}/resumes/${notExistId}`)
+            .put(`/api/users/${userId}/resumes/${notExistId}`)
             .set("Authorization", `Bearer ${token}`)
             .send(validResume)
             .expect(404);
@@ -87,7 +87,7 @@ describe("Update Resume", () => {
         expect(updateResp.body).toHaveProperty("message", "Resume not found");
     });
 
-    it("PUT /users/:userId/resumes/:resumeId — 404 when user2 is not an owner", async () => {
+    it("PUT /api/users/:userId/resumes/:resumeId — 404 when user2 is not an owner", async () => {
         // create the first user
         const userId = loggedUser.userId;
         const token = loggedUser.token;
@@ -103,7 +103,7 @@ describe("Update Resume", () => {
 
         // User2 try to update the resume of the first user
         await request(app)
-            .put(`/users/${user2id}/resumes/${resumeId}`)
+            .put(`/api/users/${user2id}/resumes/${resumeId}`)
             .set("Authorization", `Bearer ${user2token}`)
             .send({ ...validResume, name: "Hacker Name" })
             .expect(404);
@@ -112,13 +112,13 @@ describe("Update Resume", () => {
         await Resume.deleteOne({ _id: resumeId }); // clear
     });
 
-    it("PUT /users/:userId/resumes/:resumeId — old resume lost isMainResume flag when new resume set isMainResume", async () => {
+    it("PUT /api/users/:userId/resumes/:resumeId — old resume lost isMainResume flag when new resume set isMainResume", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         // 1. Create the primary resume
         const mainResp = await request(app)
-            .post(`/users/${userId}/resumes`)
+            .post(`/api/users/${userId}/resumes`)
             .set("Authorization", `Bearer ${token}`)
             .send({ ...validResume, name: "Main Resume", isMainResume: true })
             .expect(201);
@@ -126,7 +126,7 @@ describe("Update Resume", () => {
 
         // 2. Create the second (regular) resume
         const secondaryResp = await request(app)
-            .post(`/users/${userId}/resumes`)
+            .post(`/api/users/${userId}/resumes`)
             .set("Authorization", `Bearer ${token}`)
             .send({ ...validResume, name: "Secondary Resume", isMainResume: false })
             .expect(201);
@@ -134,14 +134,14 @@ describe("Update Resume", () => {
 
         // 3. Update the second resume, set is as primary
         await request(app)
-            .put(`/users/${userId}/resumes/${secondaryResumeId}`)
+            .put(`/api/users/${userId}/resumes/${secondaryResumeId}`)
             .set("Authorization", `Bearer ${token}`)
             .send({ isMainResume: true })
             .expect(200);
 
         // 4. Check, that the second resume only has isMainResume === true
         const allResumesResp = await request(app)
-            .get(`/users/${userId}/resumes`)
+            .get(`/api/users/${userId}/resumes`)
             .set("Authorization", `Bearer ${token}`)
             .expect(200);
 

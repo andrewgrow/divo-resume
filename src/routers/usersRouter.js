@@ -10,10 +10,10 @@ import userIdMiddleware from "../middleware/userIdMiddleware.js";
 
 const router = express.Router();
 
-// resumes router includes into users path, so it looks like /users/:userId/resumes
+// resumes router includes into users path, so it looks like /api/users/:userId/resumes
 router.use("/:userId/resumes", authMiddleware, userIdMiddleware, resumesRouter);
 
-// jobs router includes into users path, so it looks like /users/:userId/jobs
+// jobs router includes into users path, so it looks like /api/users/:userId/jobs
 router.use("/:userId/jobs", authMiddleware, userIdMiddleware, jobsRouter);
 
 const loginLimiter = rateLimit({
@@ -22,10 +22,10 @@ const loginLimiter = rateLimit({
     message: { error: 'Too many login attempts. Please try again later.' }
 });
 
-// POST /users/login
+// POST /api/users/login
 /**
  * @openapi
- * /users/login:
+ * /api/users/login:
  *   post:
  *     summary: User login
  *     description: Authenticates a user and returns a JWT token.
@@ -70,10 +70,10 @@ const registerLimiter = rateLimit({
     message: { error: 'Too many registration attempts. Please try again later.' }
 });
 
-// POST /users
+// POST /api/users
 /**
  * @openapi
- * /users:
+ * /api/users:
  *   post:
  *     summary: Register a new user
  *     description: Creates a new user account and returns the created user object.

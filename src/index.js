@@ -68,6 +68,7 @@ import "dotenv/config";
 import baseRouter from "./routers/baseRouter.js";
 import usersRouter from "./routers/usersRouter.js";
 import {ResumeSchemaForSwagger} from "./database/models/resume.js";
+import rateLimit from "express-rate-limit";
 
 // catch unexpected exceptions
 process.on("uncaughtException", (err) => {
@@ -94,7 +95,13 @@ if (swaggerOptions) {
     console.log('Swagger UI available at http://localhost:' + port + '/api-docs'); // e.g. http://localhost:3000/api-docs
 }
 
-app.use("/users", usersRouter);
+const rateLimiter = rateLimit({
+    windowMs: 1000 * 3, // 3 seconds
+    max: process.env.NODE_ENV === "test" ? 100_000 : 25, // 25 requests per IP
+    message: { error: 'Too many registration attempts. Please try again later.' }
+});
+
+app.use("/api/users", rateLimiter, usersRouter);
 app.use("/", baseRouter) // final router
 
 app.use(errorHandler)

@@ -13,7 +13,7 @@ dotenv.config({ path: ".env.test" });
 
 export const app = express();
 app.use(express.json());
-app.use("/users", usersRouter);
+app.use("/api/users", usersRouter);
 
 export async function globalSetup() {
     if (process.env.NODE_ENV !== "test") {
@@ -25,12 +25,12 @@ export async function globalSetup() {
 export async function createUserAndLogin(email = `email${UUID.v4()}@example.com`) {
     // Create test user
     await request(app)
-        .post("/users")
+        .post("/api/users")
         .send({ login: email, password: "123456" });
 
     // Get token and userId
     const loginRes = await request(app)
-        .post("/users/login")
+        .post("/api/users/login")
         .send({ login: email, password: "123456" });
 
     return { token: loginRes.body.token, userId: loginRes.body.userId };
@@ -38,7 +38,7 @@ export async function createUserAndLogin(email = `email${UUID.v4()}@example.com`
 
 export async function createResumeRecord(userId, token) {
     const res = await request(app)
-        .post(`/users/${userId}/resumes`)
+        .post(`/api/users/${userId}/resumes`)
         .set("Authorization", `Bearer ${token}`)
         .send(validResume)
         .expect(201);

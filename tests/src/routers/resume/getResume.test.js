@@ -31,27 +31,27 @@ describe("Get Resume", () => {
         await closeDb();
     });
 
-    it("GET /users/:userId/resumes/:resumeId — 400 if resume id is not valid", async () => {
+    it("GET /api/users/:userId/resumes/:resumeId — 400 if resume id is not valid", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         const invalidResumeId = "notAnObjectId";
         const res = await request(app)
-            .get(`/users/${userId}/resumes/${invalidResumeId}`)
+            .get(`/api/users/${userId}/resumes/${invalidResumeId}`)
             .set("Authorization", `Bearer ${token}`)
             .expect(400);
 
         expect(res.body).toHaveProperty("error");
     });
 
-    it("GET /users/:userId/resumes/:resumeId return specified resume", async () => {
+    it("GET /api/users/:userId/resumes/:resumeId return specified resume", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         const resumeId = resume._id;
 
         const getResumeResponse = await request(app)
-            .get(`/users/${userId}/resumes/${resumeId}`)
+            .get(`/api/users/${userId}/resumes/${resumeId}`)
             .set("Authorization", `Bearer ${token}`)
             .expect(200);
 
@@ -59,7 +59,7 @@ describe("Get Resume", () => {
         expect(getResumeResponse.body.userId).toBe(userId);
     });
 
-    it("GET /users/:userId/resumes/:resumeId — 403 if try to get resume owned by other user", async () => {
+    it("GET /api/users/:userId/resumes/:resumeId — 403 if try to get resume owned by other user", async () => {
         // primary user create his own resume
         const userId = loggedUser.userId;
         const token = loggedUser.token;
@@ -72,13 +72,13 @@ describe("Get Resume", () => {
 
         // User2 try to get resume owned by User1
         await request(app)
-            .get(`/users/${user2id}/resumes/${resumeId}`)
+            .get(`/api/users/${user2id}/resumes/${resumeId}`)
             .set("Authorization", `Bearer ${user2token}`)
             .expect(404); // 404 Not Found
 
         // User1 still can see his own resume
         await request(app)
-            .get(`/users/${userId}/resumes/${resumeId}`)
+            .get(`/api/users/${userId}/resumes/${resumeId}`)
             .set("Authorization", `Bearer ${token}`)
             .expect(200); // still exists
 

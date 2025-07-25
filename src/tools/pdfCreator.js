@@ -11,10 +11,10 @@ export function generateResumePdf(resume, cacheDir = "../../../cache") {
     const resumePath = filePath(`${cacheDir}/${resumeFileName}`);
     const doc = new PDFDocument({ margin: 40 });
 
-    doc.registerFont('roboto', path.resolve("./assets/fonts/roboto/Roboto-Regular.ttf"));
-    doc.registerFont('roboto-bold', path.resolve("./assets/fonts/roboto/Roboto-Bold.ttf"));
-    doc.registerFont('roboto-italic', path.resolve("./assets/fonts/roboto/Roboto-Italic.ttf"));
-    doc.registerFont('roboto-bolditalic', path.resolve("./assets/fonts/roboto/Roboto-BoldItalic.ttf"));
+    doc.registerFont('roboto', path.resolve("./src/assets/fonts/roboto/Roboto-Regular.ttf"));
+    doc.registerFont('roboto-bold', path.resolve("./src/assets/fonts/roboto/Roboto-Bold.ttf"));
+    doc.registerFont('roboto-italic', path.resolve("./src/assets/fonts/roboto/Roboto-Italic.ttf"));
+    doc.registerFont('roboto-bolditalic', path.resolve("./src/assets/fonts/roboto/Roboto-BoldItalic.ttf"));
 
     const stream = fs.createWriteStream(resumePath);
     doc.pipe(stream);

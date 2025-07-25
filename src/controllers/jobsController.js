@@ -32,7 +32,7 @@ export async function createOne(req, res) {
 
 export async function takeScreenshot(req, res) {
     const job = req.foundJob;
-    job.screenshot = await makeScreenshotAsPdf(job.url) // e.g. "/Users/hrow/WebstormProjects/Divo-Resume/cache/dropbox-7d82b0c9-1110-4915-a9a8-be14e044fc09.pdf";
+    job.screenshot = await makeScreenshotAsPdf(job.url) // e.g. "/cache/be14e044fc09.pdf";
     const updatedJob = await updateJob(job)
     res.json(updatedJob);
 }
@@ -40,7 +40,7 @@ export async function takeScreenshot(req, res) {
 export async function parseJob(req, res) {
     const job = req.foundJob;
     const jobId = job._id;
-    const screenshotPath = job.screenshot // e.g. "/Users/hrow/WebstormProjects/Divo-Resume/cache/dropbox-7d82b0c9-1110-4915-a9a8-be14e044fc09.pdf";
+    const screenshotPath = job.screenshot // e.g. "/cache/be14e044fc09.pdf";
     if (!screenshotPath) {
         return res.status(400).json({ message: `Screenshot for the Job ${jobId} does not exist` });
     }

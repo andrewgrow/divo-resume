@@ -31,19 +31,19 @@ describe("Delete Resume", () => {
         await closeDb();
     });
 
-    it("DELETE /users/:userId/resumes/:resumeId delete specified resume", async () => {
+    it("DELETE /api/users/:userId/resumes/:resumeId delete specified resume", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         const resumeId = resume._id;
 
         await request(app)
-            .delete(`/users/${userId}/resumes/${resumeId}`)
+            .delete(`/api/users/${userId}/resumes/${resumeId}`)
             .set("Authorization", `Bearer ${token}`)
             .expect(200);
 
         await request(app)
-            .get(`/users/${userId}/resumes/${resumeId}`)
+            .get(`/api/users/${userId}/resumes/${resumeId}`)
             .set("Authorization", `Bearer ${token}`)
             .expect(404);
     });

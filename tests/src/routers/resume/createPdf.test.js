@@ -32,48 +32,48 @@ describe("Create PDF from Resume", () => {
         await closeDb();
     });
 
-    it("POST /users/:userId/resumes/:resumeId/createPdf — 401 without auth", async () => {
+    it("POST /api/users/:userId/resumes/:resumeId/createPdf — 401 without auth", async () => {
         const userId = loggedUser.userId;
         const notExistId = "64c789012345678901234567";
 
         await request(app)
-            .post(`/users/${userId}/resumes/${notExistId}/createPdf`)
+            .post(`/api/users/${userId}/resumes/${notExistId}/createPdf`)
             .expect(401);
     });
 
-    it("POST /users/:userId/resumes/:resumeId/createPdf — 404 if resume does not exist", async () => {
+    it("POST /api/users/:userId/resumes/:resumeId/createPdf — 404 if resume does not exist", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         // make test ObjectId
         const notExistId = "64c789012345678901234567";
         await request(app)
-            .post(`/users/${userId}/resumes/${notExistId}/createPdf`)
+            .post(`/api/users/${userId}/resumes/${notExistId}/createPdf`)
             .set("Authorization", `Bearer ${token}`)
             .expect(404);
     });
 
-    it("POST /users/:userId/resumes/:resumeId/createPdf — 400 if resumeId is invalid", async () => {
+    it("POST /api/users/:userId/resumes/:resumeId/createPdf — 400 if resumeId is invalid", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
         await request(app)
-            .post(`/users/${userId}/resumes/notAnObjectId/createPdf`)
+            .post(`/api/users/${userId}/resumes/notAnObjectId/createPdf`)
             .set("Authorization", `Bearer ${token}`)
             .expect(400);
     });
 
-    it("POST /users/:userId/resumes/:resumeId/createPdf — 400 if userId is invalid", async () => {
+    it("POST /api/users/:userId/resumes/:resumeId/createPdf — 400 if userId is invalid", async () => {
         const token = loggedUser.token;
         const resumeId = resume._id;
 
         await request(app)
-            .post(`/users/notAnObjectId/resumes/${resumeId}/createPdf`)
+            .post(`/api/users/notAnObjectId/resumes/${resumeId}/createPdf`)
             .set("Authorization", `Bearer ${token}`)
             .expect(400);
     });
 
-    it("POST /users/:userId/resumes/:resumeId/createPdf — successfully creates PDF and updates pdfFilePath in DB", async () => {
+    it("POST /api/users/:userId/resumes/:resumeId/createPdf — successfully creates PDF and updates pdfFilePath in DB", async () => {
         // create user
         const userId = loggedUser.userId;
         const token = loggedUser.token;
@@ -82,7 +82,7 @@ describe("Create PDF from Resume", () => {
         const resumeId = resume._id;
 
         const response = await request(app)
-            .post(`/users/${userId}/resumes/${resumeId}/createPdf`)
+            .post(`/api/users/${userId}/resumes/${resumeId}/createPdf`)
             .set("Authorization", `Bearer ${token}`)
             .expect(201);
 
@@ -102,14 +102,14 @@ describe("Create PDF from Resume", () => {
         expect(fs.existsSync(response.body.pdfFilePath)).toBe(false);
     });
 
-    it("POST /users/:userId/resumes/:resumeId/createPdf — 404 if user try to create pdf by someone else's resume", async () => {
+    it("POST /api/users/:userId/resumes/:resumeId/createPdf — 404 if user try to create pdf by someone else's resume", async () => {
         const resumeId = resume._id;
 
         // Create the second user
         const user2 = await createUserAndLogin();
         // user2 try to create pdf by someone else's resume
         await request(app)
-            .post(`/users/${user2.userId}/resumes/${resumeId}/createPdf`)
+            .post(`/api/users/${user2.userId}/resumes/${resumeId}/createPdf`)
             .set("Authorization", `Bearer ${user2.token}`)
             .expect(404);
 

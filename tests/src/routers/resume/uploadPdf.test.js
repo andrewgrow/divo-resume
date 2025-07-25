@@ -35,7 +35,7 @@ describe("Upload Pdf to Resume", () => {
         await closeDb();
     });
 
-    it("POST /users/:userId/resumes/uploadPdf — successful upload PDF файл", async () => {
+    it("POST /api/users/:userId/resumes/uploadPdf — successful upload PDF файл", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
@@ -55,13 +55,13 @@ describe("Upload Pdf to Resume", () => {
 
         // Impossible to upload without auth
         await request(app)
-            .post(`/users/${userId}/resumes/uploadPdf`)
+            .post(`/api/users/${userId}/resumes/uploadPdf`)
             .attach("upload_file", resumePath)
             .expect(401);
 
         // 3. Upload file via Endpoint and create new resume
         const createdResumeResponse = await request(app)
-            .post(`/users/${userId}/resumes/uploadPdf`)
+            .post(`/api/users/${userId}/resumes/uploadPdf`)
             .set("Authorization", `Bearer ${token}`)
             .attach("upload_file", resumePath)
             .expect(201);
@@ -88,7 +88,7 @@ describe("Upload Pdf to Resume", () => {
         await Resume.deleteOne({ _id: createdResume._id });
     });
 
-    it("POST /users/:userId/resumes/uploadPdf — error if not PDF", async () => {
+    it("POST /api/users/:userId/resumes/uploadPdf — error if not PDF", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
@@ -99,7 +99,7 @@ describe("Upload Pdf to Resume", () => {
         await new Promise(r => setTimeout(r, 50));
 
         const response = await request(app)
-            .post(`/users/${userId}/resumes/uploadPdf`)
+            .post(`/api/users/${userId}/resumes/uploadPdf`)
             .set("Authorization", `Bearer ${token}`)
             .attach("upload_file", testTxtPath)
             .expect(400);
@@ -109,7 +109,7 @@ describe("Upload Pdf to Resume", () => {
         await fs.unlinkSync(testTxtPath);
     });
 
-    it("POST /users/:userId/resumes/uploadPdf — error if file too large", async () => {
+    it("POST /api/users/:userId/resumes/uploadPdf — error if file too large", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
@@ -121,7 +121,7 @@ describe("Upload Pdf to Resume", () => {
         await new Promise(r => setTimeout(r, 50));
 
         const response = await request(app)
-            .post(`/users/${userId}/resumes/uploadPdf`)
+            .post(`/api/users/${userId}/resumes/uploadPdf`)
             .set("Authorization", `Bearer ${token}`)
             .attach("upload_file", bigPdfPath)
             .expect(400);
@@ -132,7 +132,7 @@ describe("Upload Pdf to Resume", () => {
         expect(fs.existsSync(bigPdfPath)).toBe(false);
     });
 
-    it("POST /users/:userId/resumes/uploadPdf — should update resume in DB with file path", async () => {
+    it("POST /api/users/:userId/resumes/uploadPdf — should update resume in DB with file path", async () => {
         const userId = loggedUser.userId;
         const token = loggedUser.token;
 
@@ -145,7 +145,7 @@ describe("Upload Pdf to Resume", () => {
 
         // 2. Upload file and create new resume
         const createdResumeResponse = await request(app)
-            .post(`/users/${userId}/resumes/uploadPdf`)
+            .post(`/api/users/${userId}/resumes/uploadPdf`)
             .set("Authorization", `Bearer ${token}`)
             .attach("upload_file", resumePath)
             .expect(201);

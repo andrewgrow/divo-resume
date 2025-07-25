@@ -143,7 +143,7 @@ export async function parseResumeFromPdf(req, res) {
         return res.status(400).json({ error: "UserId or Resume not found" });
     }
 
-    const resumeFilePath = resumeAsModel.pdfFilePath // e.g. "/Users/hrow/WebstormProjects/Divo-Resume/cache/7d82b0c9-1110-4915-a9a8-be14e044fc09.pdf";
+    const resumeFilePath = resumeAsModel.pdfFilePath // e.g. "/cache/be14e044fc09.pdf";
     if (!resumeFilePath) {
         return res.status(400).json({ message: `PDF File for the Resume ${resumeAsModel._id} does not exist` });
     }
