@@ -1,62 +1,12 @@
 // /src/index.js
 
+if (process.env.NODE_ENV === 'development') {
+    console.log('Happy developing mode is enabled ✨')
+}
+
 import {connectMongoose} from "./database/connection/db.js";
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
-
-import { JobSchemaForSwagger } from "./database/models/job.js";
-
-let swaggerOptions = null;
-
-if (process.env.NODE_ENV === 'development') {
-    console.log('Happy developing mode is enabled ✨')
-
-    // Swagger options
-    swaggerOptions = {
-        definition: {
-            openapi: '3.0.0',
-            info: {
-                title: 'Example API',
-                version: '1.0.0',
-                description: 'Backend API Documentation',
-            },
-            components: {
-                securitySchemes: {
-                    bearerAuth: {
-                        type: 'http',
-                        scheme: 'bearer',
-                        bearerFormat: 'JWT',
-                    },
-                },
-                responses: {
-                    NotFound: {
-                        description: "Route not found",
-                        content: {
-                            "application/json": {
-                                schema: {
-                                    type: "object",
-                                    properties: {
-                                        error: { type: "string", example: "Route not found" }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                schemas: {
-                    Job: JobSchemaForSwagger,
-                    Resume: ResumeSchemaForSwagger,
-                }
-            },
-            security: [
-                {
-                    bearerAuth: [],
-                },
-            ],
-        },
-        apis: ['./src/routers/*.js'], // path to routers
-    };
-}
 
 import { requestId } from "./middleware/requestId.js";
 import { logger } from "./middleware/logger.js";
@@ -67,8 +17,14 @@ import "dotenv/config";
 
 import baseRouter from "./routers/baseRouter.js";
 import usersRouter from "./routers/usersRouter.js";
-import {ResumeSchemaForSwagger} from "./database/models/resume.js";
 import rateLimit from "express-rate-limit";
+import prepareSwaggerOptions from "./utils/preparing/prepareSwaggerOptions.js";
+import cors from 'cors';
+
+let swaggerOptions = process.env.NODE_ENV === 'development' ? prepareSwaggerOptions : null;
+const allowedOrigins = process.env.NODE_ENV === 'production'
+    ? [process.env.CORS_ORIGIN] // production frontend
+    : ['http://localhost:5173']; // development frontend
 
 // catch unexpected exceptions
 process.on("uncaughtException", (err) => {
@@ -87,6 +43,8 @@ const port = process.env.PORT || 3000;
 app.use(requestId) // Always first because need to set UUID
 app.use(express.json()); // Always the second because need to parse JSON
 app.use(logger) // Always the third because need to logging requests and responses
+
+app.use(cors({origin: allowedOrigins})); // CORS
 
 // development mode
 if (swaggerOptions) {
